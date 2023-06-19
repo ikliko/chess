@@ -1,4 +1,4 @@
-import { Application, Loader, Texture, AnimatedSprite } from "pixi.js";
+import { AnimatedSprite, Application, Container, Graphics, Loader, Text, TextStyle, Texture } from "pixi.js";
 import { getSpine } from "./spine-example";
 import "./style.css";
 
@@ -24,29 +24,68 @@ window.onload = async (): Promise<void> => {
 
     const birdFromSprite = getBird();
     birdFromSprite.anchor.set(0.5, 0.5);
-    birdFromSprite.position.set(gameWidth / 2, 530);
+    birdFromSprite.position.set(app.view.width / 2, 530);
 
     const spineExample = getSpine();
     spineExample.position.y = 580;
 
-    app.stage.addChild(birdFromSprite);
-    app.stage.addChild(spineExample);
-    app.stage.interactive = true;
+    const gameplay = new Container();
+    gameplay.addChild(birdFromSprite);
+    gameplay.addChild(spineExample);
+    gameplay.interactive = true;
+
+    app.stage.addChild(gameplay);
+
+    const menu = new Container();
+
+    const redRect = new Graphics();
+    redRect.beginFill(0xcccccc, 0.7).drawRect(0, 0, app.view.width, app.view.height).endFill();
+
+    menu.addChild(redRect);
+
+    const playBtn = new Text("Play");
+    playBtn.anchor.set(0.5, 0.5);
+    playBtn.x = app.view.width / 2;
+    playBtn.y = app.view.height / 2;
+    playBtn.style = new TextStyle({
+        fill: 0xfcfcfc,
+        fontSize: 70,
+        fontFamily: "Arial",
+        fontWeight: "bold",
+        // stroke: 0xff0000,
+        // strokeThickness: 2,
+        dropShadow: true,
+        dropShadowAlpha: 1,
+        dropShadowAngle: 0.1,
+        dropShadowBlur: 0.6,
+        dropShadowColor: 0x000000,
+        dropShadowDistance: 3,
+    });
+    playBtn.on("pointerdown", function () {
+        menu.visible = false;
+    });
+    playBtn.on("mouseover", function () {
+        playBtn.style.dropShadowAngle = 10;
+    });
+    playBtn.on("mouseout", function () {
+        playBtn.style.dropShadowAngle = 0.1;
+    });
+    playBtn.interactive = true;
+    playBtn.buttonMode = true;
+    menu.addChild(playBtn);
+
+    app.stage.addChild(menu);
 };
 
 async function loadGameAssets(): Promise<void> {
     return new Promise((res, rej) => {
         const loader = Loader.shared;
+
         loader.add("rabbit", "./assets/simpleSpriteSheet.json");
         loader.add("pixie", "./assets/spine-assets/pixie.json");
 
-        loader.onComplete.once(() => {
-            res();
-        });
-
-        loader.onError.once(() => {
-            rej();
-        });
+        loader.onComplete.once(() => res());
+        loader.onError.once(() => rej());
 
         loader.load();
     });
@@ -55,8 +94,8 @@ async function loadGameAssets(): Promise<void> {
 function resizeCanvas(): void {
     const resize = () => {
         app.renderer.resize(window.innerWidth, window.innerHeight);
-        app.stage.scale.x = window.innerWidth / gameWidth;
-        app.stage.scale.y = window.innerHeight / gameHeight;
+        app.stage.width = window.innerWidth;
+        app.stage.height = window.innerHeight;
     };
 
     resize();
