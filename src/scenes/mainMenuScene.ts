@@ -1,6 +1,6 @@
 import { Application, Container, Graphics, Text, TextStyle } from "pixi.js";
 
-export default function mainMenuScene(app: Application) {
+export function mainMenuScene(app: Application) {
     const menu = new Container();
     const redRect = new Graphics();
     redRect.beginFill(0xcccccc, 0.7).drawRect(0, 0, app.view.width, app.view.height).endFill();

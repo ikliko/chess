@@ -3,6 +3,38 @@ import { getFigures, makeFigure } from "../helpers/getFiguresObject";
 
 const boardItems: any[][] = [];
 let figures = {};
+let chessBoardConfig: ChessBoardConfig | null = null;
+
+interface ChessBoardConfig {
+    fullBoardSize: number;
+    cellSize: number;
+    figSize: number;
+    figPaddings: number;
+    boardX: number;
+    boardY: number;
+}
+
+function setChessBoardConfig(app: Application): void {
+    if (chessBoardConfig) {
+        return;
+    }
+
+    const fullBoardSize = Math.max(Math.round(app.view.width / 3), 400);
+    const cellSize = Math.round(fullBoardSize / 8);
+    const figSize = Math.round(cellSize * 0.7);
+    const figPaddings = Math.round((cellSize - figSize) / 2);
+    const boardX = app.view.width / 2 - fullBoardSize / 2;
+    const boardY = app.view.height / 2 - fullBoardSize / 2;
+
+    chessBoardConfig = {
+        fullBoardSize,
+        cellSize,
+        figSize,
+        figPaddings,
+        boardX,
+        boardY,
+    };
+}
 
 function getFigure(
     row: number,
@@ -47,8 +79,28 @@ function getFigure(
     return figure;
 }
 
-export default function getGameplayScene(app: Application) {
-    const gameplay = new Container();
+function getBoard(): Graphics | undefined {
+    if (!chessBoardConfig) {
+        return;
+    }
+
+    const board = new Graphics();
+    board.beginFill(0xff0000);
+    board.drawRect(
+        chessBoardConfig.boardX,
+        chessBoardConfig.boardY,
+        chessBoardConfig.fullBoardSize,
+        chessBoardConfig.fullBoardSize,
+    );
+    board.endFill();
+
+    return board;
+}
+
+function renderBoardPath(gameplay: Container) {
+    if (!chessBoardConfig) {
+        return;
+    }
 
     const boardTextureOrder: any[] = [
         {
@@ -62,23 +114,7 @@ export default function getGameplayScene(app: Application) {
             normal: Texture.from("square_brown_light.png"),
         },
     ];
-
-    figures = getFigures();
-
-    const fullBoardSize = Math.max(Math.round(app.view.width / 3), 400);
-    const cellSize = Math.round(fullBoardSize / 8);
-    const figSize = Math.round(cellSize * 0.7);
-    const figPaddings = Math.round((cellSize - figSize) / 2);
-    const boardX = app.view.width / 2 - fullBoardSize / 2;
-    const boardY = app.view.height / 2 - fullBoardSize / 2;
-
-    const board = new Graphics();
-    board.beginFill(0xff0000);
-    board.drawRect(boardX, boardY, fullBoardSize, fullBoardSize);
-    board.endFill();
-
-    gameplay.addChild(board);
-
+    const { boardX, boardY, cellSize, figSize, figPaddings } = chessBoardConfig;
     for (let rowI = 0; rowI < 8; rowI++) {
         const boardRow: {
             figure: any;
@@ -88,8 +124,8 @@ export default function getGameplayScene(app: Application) {
         for (let colI = 0; colI < 8; colI++) {
             const texture = boardTextureOrder[colI % 2];
             const boardPath = new Sprite(texture.normal);
-            boardPath.width = cellSize;
-            boardPath.height = cellSize;
+            boardPath.width = chessBoardConfig.cellSize;
+            boardPath.height = chessBoardConfig.cellSize;
             boardPath.x = boardX + cellSize * colI;
             boardPath.y = boardY + cellSize * rowI;
 
@@ -110,6 +146,22 @@ export default function getGameplayScene(app: Application) {
         boardItems.push(boardRow);
         boardTextureOrder.reverse();
     }
+}
+
+export default function getGameplayScene(app: Application) {
+    const gameplay = new Container();
+
+    figures = getFigures();
+
+    setChessBoardConfig(app);
+
+    let board = getBoard();
+
+    if (board) {
+        gameplay.addChild(board);
+    }
+
+    renderBoardPath(gameplay);
 
     return gameplay;
 }
