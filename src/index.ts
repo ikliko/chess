@@ -1,4 +1,4 @@
-import { AnimatedSprite, Application, Container, Graphics, Loader, Text, TextStyle, Texture } from "pixi.js";
+import { AnimatedSprite, Application, Container, Graphics, Loader, Sprite, Text, TextStyle, Texture } from "pixi.js";
 import { getSpine } from "./spine-example";
 import "./style.css";
 
@@ -15,13 +15,9 @@ const app = new Application({
     height: gameHeight,
 });
 
-window.onload = async (): Promise<void> => {
-    await loadGameAssets();
+const boardItems: any[][] = [];
 
-    document.body.appendChild(app.view);
-
-    resizeCanvas();
-
+function getGameplayScene() {
     const birdFromSprite = getBird();
     birdFromSprite.anchor.set(0.5, 0.5);
     birdFromSprite.position.set(app.view.width / 2, 530);
@@ -33,6 +29,160 @@ window.onload = async (): Promise<void> => {
     gameplay.addChild(birdFromSprite);
     gameplay.addChild(spineExample);
     gameplay.interactive = true;
+
+    const board = new Graphics();
+    const fullBoardSize = Math.max(app.view.width / 4, 600);
+    const cellSize = fullBoardSize / 8;
+    const boardX = app.view.width / 2 - fullBoardSize / 2;
+    const boardY = app.view.height / 2 - fullBoardSize / 2;
+    board.beginFill(0xff0000);
+    board.drawRect(boardX, boardY, fullBoardSize, fullBoardSize);
+    gameplay.addChild(board);
+
+    const textureOrder = [
+        {
+            key: "gray",
+            dark: Texture.from("square_gray_dark.png"),
+            light: Texture.from("square_gray_light.png"),
+        },
+        {
+            key: "brown",
+            dark: Texture.from("square_brown_dark.png"),
+            light: Texture.from("square_brown_light.png"),
+        },
+    ];
+    const figures = {
+        knight: {
+            black: {
+                availableUnits: 0,
+                shadow: Texture.from("b_knight.png"),
+                noShadow: Texture.from("b_knight_ns.png"),
+            },
+            white: {
+                availableUnits: 0,
+                shadow: Texture.from("w_knight.png"),
+                noShadow: Texture.from("w_knight_ns.png"),
+            },
+        },
+        pawn: {
+            black: {
+                availableUnits: 0,
+                shadow: Texture.from("b_pawn.png"),
+                noShadow: Texture.from("b_pawn_ns.png"),
+            },
+            white: {
+                availableUnits: 0,
+                shadow: Texture.from("w_pawn.png"),
+                noShadow: Texture.from("w_pawn_ns.png"),
+            },
+        },
+        rook: {
+            black: {
+                availableUnits: 0,
+                shadow: Texture.from("b_rook.png"),
+                noShadow: Texture.from("b_rook_ns.png"),
+            },
+            white: {
+                availableUnits: 0,
+                shadow: Texture.from("w_rook.png"),
+                noShadow: Texture.from("w_rook_ns.png"),
+            },
+        },
+        queen: {
+            black: {
+                availableUnits: 0,
+                shadow: Texture.from("b_queen.png"),
+                noShadow: Texture.from("b_queen_ns.png"),
+            },
+            white: {
+                availableUnits: 0,
+                shadow: Texture.from("w_queen.png"),
+                noShadow: Texture.from("w_queen_ns.png"),
+            },
+        },
+        king: {
+            black: {
+                availableUnits: 0,
+                isInitialPlace: (row: number, col: number) => row === 7 && col === 4,
+                shadow: Texture.from("b_king.png"),
+                noShadow: Texture.from("b_king_ns.png"),
+            },
+            white: {
+                availableUnits: 1,
+                isInitialPlace: (row: number, col: number) => row === 7 && col === 4,
+                shadow: Texture.from("w_king.png"),
+                noShadow: Texture.from("w_king_ns.png"),
+            },
+        },
+        bishop: {
+            black: {
+                availableUnits: 2,
+                isInitialPlace: (row: number, col: number) => row === 0 && (col === 2 || col === 5),
+                shadow: Texture.from("b_bishop.png"),
+                noShadow: Texture.from("b_bishop_ns.png"),
+            },
+            white: {
+                availableUnits: 2,
+                isInitialPlace: (row: number, col: number) => row === 7 && (col === 2 || col === 5),
+                shadow: Texture.from("w_bishop.png"),
+                noShadow: Texture.from("w_bishop_ns.png"),
+            },
+        },
+    };
+
+    for (let rowI = 0; rowI < 8; rowI++) {
+        const boardRow: {
+            figure: any;
+            texture: any;
+            field: any;
+        }[] = [];
+        for (let colI = 0; colI < 8; colI++) {
+            const texture = textureOrder[colI % 2];
+            const boardPath = new Sprite(texture.light);
+            boardPath.width = cellSize;
+            boardPath.height = cellSize;
+            boardPath.x = boardX + cellSize * colI;
+            boardPath.y = boardY + cellSize * rowI;
+
+            for (const figure in figures) {
+                console.log(figure);
+            }
+
+            const figure = null;
+
+            boardRow.push({
+                figure,
+                texture,
+                field: boardPath,
+            });
+
+            boardPath.on("pointerdown", function () {
+                const item = boardItems[rowI - 2][colI - 1];
+                item.field.texture = item.texture.dark;
+            });
+            boardPath.on("mouseover", function () {});
+            boardPath.on("mouseout", function () {});
+            boardPath.interactive = true;
+            boardPath.buttonMode = true;
+
+            gameplay.addChild(boardPath);
+        }
+
+        boardItems.push(boardRow);
+        textureOrder.reverse();
+    }
+
+    return gameplay;
+}
+
+window.onload = async (): Promise<void> => {
+    await loadGameAssets();
+
+    document.body.appendChild(app.view);
+
+    resizeCanvas();
+
+    const gameplay = getGameplayScene();
 
     app.stage.addChild(gameplay);
 
@@ -74,7 +224,7 @@ window.onload = async (): Promise<void> => {
     playBtn.buttonMode = true;
     menu.addChild(playBtn);
 
-    app.stage.addChild(menu);
+    // app.stage.addChild(menu);
 };
 
 async function loadGameAssets(): Promise<void> {
@@ -83,6 +233,7 @@ async function loadGameAssets(): Promise<void> {
 
         loader.add("rabbit", "./assets/simpleSpriteSheet.json");
         loader.add("pixie", "./assets/spine-assets/pixie.json");
+        loader.add("chess", "./assets/chess/spritesheet.json");
 
         loader.onComplete.once(() => res());
         loader.onError.once(() => rej());
@@ -103,16 +254,29 @@ function resizeCanvas(): void {
     window.addEventListener("resize", resize);
 }
 
+let birdClicked = false;
+
 function getBird(): AnimatedSprite {
     const bird = new AnimatedSprite([
-        Texture.from("birdUp.png"),
+        // Texture.from("birdUp.png"),
         Texture.from("birdMiddle.png"),
-        Texture.from("birdDown.png"),
+        // Texture.from("birdDown.png"),
     ]);
 
-    bird.loop = true;
-    bird.animationSpeed = 0.1;
-    bird.play();
+    bird.interactive = true;
+    bird.buttonMode = true;
+    bird.on("pointerdown", function () {
+        if (birdClicked) {
+            bird.texture = Texture.from("birdMiddle.png");
+            birdClicked = false;
+            return;
+        }
+        bird.texture = Texture.from("b_bishop_ns.png");
+        birdClicked = true;
+    });
+    // bird.loop = true;
+    // bird.animationSpeed = 0.1;
+    // bird.play();
     bird.scale.set(3);
 
     return bird;
