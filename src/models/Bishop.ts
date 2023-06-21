@@ -2,7 +2,7 @@ import { ChessFigure } from "../interfaces/ChessFigure";
 import { Texture } from "pixi.js";
 import { BoardCoordinates } from "../interfaces/BoardCoordinates";
 
-export class Bishop implements ChessFigure {
+export class Bishop extends ChessFigure {
     black = {
         availableUnits: 1,
         isInitialPlace: (row: number, col: number) => row === 0 && (col === 2 || col === 5),

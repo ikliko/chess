@@ -11,7 +11,7 @@ import { Bishop } from "../models/Bishop";
 export function getFigures(): BoardFigures {
     return {
         knight: new Knight(),
-        // pawn: new Pawn(),
+        pawn: new Pawn(),
         // rook: new Rook(),
         // queen: new Queen(),
         // king: new King(),

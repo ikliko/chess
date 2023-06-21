@@ -2,7 +2,7 @@ import { ChessFigure } from "./ChessFigure";
 
 export interface BoardFigures {
     knight: ChessFigure;
-    // pawn: ChessFigure;
+    pawn: ChessFigure;
     // rook: ChessFigure;
     // queen: ChessFigure;
     // king: ChessFigure;

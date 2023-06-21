@@ -2,8 +2,9 @@ import { ChessFigure } from "../interfaces/ChessFigure";
 import { Texture } from "pixi.js";
 import { BoardCoordinates } from "../interfaces/BoardCoordinates";
 import { isInsideBorder } from "../helpers/isInsideBorder";
+import { BoardItem } from "../entities/BoardItem";
 
-export class Knight implements ChessFigure {
+export class Knight extends ChessFigure {
     black = {
         availableUnits: 2,
         isInitialPlace: (row: number, col: number) => (row === 0 && col === 1) || (row === 0 && col === 6),
@@ -17,8 +18,12 @@ export class Knight implements ChessFigure {
         active: Texture.from("w_knight.png"),
     };
 
-    getAvailablePlaces(row: number, col: number, boardItems: any[][]): BoardCoordinates[] {
+    getAvailablePlaces(row: number, col: number, boardItems: BoardItem[][]): BoardCoordinates[] {
         const positions: BoardCoordinates[] = [];
+        const attackerCoords: BoardCoordinates = {
+            row,
+            col,
+        };
 
         // up left
         const upLeftPos: BoardCoordinates = {
@@ -26,7 +31,10 @@ export class Knight implements ChessFigure {
             row: row - 2,
         };
 
-        if (isInsideBorder(upLeftPos) && !boardItems[upLeftPos.row][upLeftPos.col].currentFigure) {
+        if (
+            isInsideBorder(upLeftPos) &&
+            (Knight.isEmptyField(boardItems, upLeftPos) || Knight.isAttack(attackerCoords, boardItems, upLeftPos))
+        ) {
             positions.push(upLeftPos);
         }
 
@@ -36,7 +44,10 @@ export class Knight implements ChessFigure {
             row: row - 2,
         };
 
-        if (isInsideBorder(upRightPos) && !boardItems[upRightPos.row][upRightPos.col].currentFigure) {
+        if (
+            isInsideBorder(upRightPos) &&
+            (Knight.isEmptyField(boardItems, upRightPos) || Knight.isAttack(attackerCoords, boardItems, upRightPos))
+        ) {
             positions.push(upRightPos);
         }
 
@@ -46,7 +57,10 @@ export class Knight implements ChessFigure {
             row: row - 1,
         };
 
-        if (isInsideBorder(leftUpPos) && !boardItems[leftUpPos.row][leftUpPos.col].currentFigure) {
+        if (
+            isInsideBorder(leftUpPos) &&
+            (Knight.isEmptyField(boardItems, leftUpPos) || Knight.isAttack(attackerCoords, boardItems, leftUpPos))
+        ) {
             positions.push(leftUpPos);
         }
 
@@ -56,7 +70,10 @@ export class Knight implements ChessFigure {
             row: row - 1,
         };
 
-        if (isInsideBorder(rightUpPos) && !boardItems[rightUpPos.row][rightUpPos.col].currentFigure) {
+        if (
+            isInsideBorder(rightUpPos) &&
+            (Knight.isEmptyField(boardItems, rightUpPos) || Knight.isAttack(attackerCoords, boardItems, rightUpPos))
+        ) {
             positions.push(rightUpPos);
         }
 
@@ -66,7 +83,10 @@ export class Knight implements ChessFigure {
             row: row + 2,
         };
 
-        if (isInsideBorder(downLeftPos) && !boardItems[downLeftPos.row][downLeftPos.col].currentFigure) {
+        if (
+            isInsideBorder(downLeftPos) &&
+            (Knight.isEmptyField(boardItems, downLeftPos) || Knight.isAttack(attackerCoords, boardItems, downLeftPos))
+        ) {
             positions.push(downLeftPos);
         }
 
@@ -76,7 +96,10 @@ export class Knight implements ChessFigure {
             row: row + 2,
         };
 
-        if (isInsideBorder(downRightPos) && !boardItems[downRightPos.row][downRightPos.col].currentFigure) {
+        if (
+            isInsideBorder(downRightPos) &&
+            (Knight.isEmptyField(boardItems, downRightPos) || Knight.isAttack(attackerCoords, boardItems, downRightPos))
+        ) {
             positions.push(downRightPos);
         }
 
@@ -86,7 +109,10 @@ export class Knight implements ChessFigure {
             row: row + 1,
         };
 
-        if (isInsideBorder(leftDownPos) && !boardItems[leftDownPos.row][leftDownPos.col].currentFigure) {
+        if (
+            isInsideBorder(leftDownPos) &&
+            (Knight.isEmptyField(boardItems, leftDownPos) || Knight.isAttack(attackerCoords, boardItems, leftDownPos))
+        ) {
             positions.push(leftDownPos);
         }
 
@@ -96,7 +122,10 @@ export class Knight implements ChessFigure {
             row: row + 1,
         };
 
-        if (isInsideBorder(rightDownPos) && !boardItems[rightDownPos.row][rightDownPos.col].currentFigure) {
+        if (
+            isInsideBorder(rightDownPos) &&
+            (Knight.isEmptyField(boardItems, rightDownPos) || Knight.isAttack(attackerCoords, boardItems, rightDownPos))
+        ) {
             positions.push(rightDownPos);
         }
 
