@@ -1,7 +1,6 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import { BoardCoordinates } from "../interfaces/BoardCoordinates";
 import { ChessFigureSide } from "../interfaces/ChessFigureSide";
-import useFakeTimers = jest.useFakeTimers;
 
 export enum FigureColor {
     black = "black",
@@ -97,8 +96,8 @@ export class BoardItem {
             return;
         }
 
-        this.currentFigure.x = this.coords.x + this.figPadding / 2;
-        this.currentFigure.y = this.coords.y + this.figPadding / 2;
+        this.currentFigure.x = this.coords.x + this.currentFigure.width / 2 + this.figPadding / 2;
+        this.currentFigure.y = this.coords.y + this.currentFigure.height / 2 + this.figPadding / 2;
     }
 
     deactivate() {
@@ -161,7 +160,7 @@ export class BoardItem {
         }
 
         const figure = new Sprite(this.figureTexturesObject.figureTextures.normal);
-
+        figure.anchor.set(0.5, 0.5);
         figure.width = this.figSize;
         figure.height = this.figSize;
 
@@ -182,6 +181,14 @@ export class BoardItem {
 
         this.container.addChild(figure);
         this.moveFigure();
+    }
+
+    public rotate() {
+        if (!this.currentFigure) {
+            return;
+        }
+
+        this.currentFigure.rotation += Math.PI * 2 * 0.5;
     }
 
     private prepareFigureToMove() {

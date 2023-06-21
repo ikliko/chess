@@ -176,6 +176,11 @@ export default function getGameplayScene(app: Application) {
         });
     });
 
+    function rotateBoard() {
+        gameplay.rotation += Math.PI * 2 * 0.5;
+        boardItems.forEach((row) => row.forEach((item) => item.rotate()));
+    }
+
     window.addEventListener("moveFigureHere", (event) => {
         const moveTo = (event as any).detail;
 
@@ -187,7 +192,7 @@ export default function getGameplayScene(app: Application) {
         clearBoard();
         switchPlayer();
 
-        gameplay.rotation += Math.PI * 2 * 0.5;
+        rotateBoard();
     });
 
     gameplay.sortableChildren = true;
