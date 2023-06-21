@@ -26,7 +26,7 @@ window.onload = async (): Promise<void> => {
     app.stage.addChild(gameplay);
 
     const menu = mainMenuScene(app);
-    app.stage.addChild(menu);
+    // app.stage.addChild(menu);
 };
 
 async function loadGameAssets(): Promise<void> {
