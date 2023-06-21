@@ -4,6 +4,7 @@ import { ChessBoardConfig } from "../interfaces/ChessBoardConfig";
 import { BoardCoordinates } from "../interfaces/BoardCoordinates";
 import { BoardFigures } from "../interfaces/BoardFigures";
 import { BoardItem, Figure, FigureColor } from "../entities/BoardItem";
+import { rotateContainer } from "../helpers/rotateContainer";
 
 const boardItems: any[][] = [];
 let figures: BoardFigures | {} = {};
@@ -177,8 +178,18 @@ export default function getGameplayScene(app: Application) {
     });
 
     function rotateBoard() {
-        gameplay.rotation += Math.PI * 2 * 0.5;
-        boardItems.forEach((row) => row.forEach((item) => item.rotate()));
+        let currentRotation = gameplay.rotation;
+
+        const targetRotation = currentRotation + Math.PI; // Rotate up to 180 degrees (π radians)
+        const duration = 2000; // Animation duration in milliseconds
+
+        rotateContainer(app, gameplay, targetRotation, duration);
+
+        const figureFields = boardItems.flat().filter((boardItem) => boardItem.currentFigure);
+
+        console.log(figureFields, figureFields.length);
+
+        figureFields.forEach((boardItem: BoardItem) => boardItem.rotate(app));
     }
 
     window.addEventListener("moveFigureHere", (event) => {

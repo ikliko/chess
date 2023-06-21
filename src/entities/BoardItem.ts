@@ -1,6 +1,7 @@
-import { Container, Sprite, Texture } from "pixi.js";
+import { Application, Container, Sprite, Texture } from "pixi.js";
 import { BoardCoordinates } from "../interfaces/BoardCoordinates";
 import { ChessFigureSide } from "../interfaces/ChessFigureSide";
+import { rotateContainer } from "../helpers/rotateContainer";
 
 export enum FigureColor {
     black = "black",
@@ -40,7 +41,7 @@ export class BoardItem {
             normal: Texture;
         },
         initialSize: number,
-        boardCoords: { row: number; col: number },
+        boardCoords: BoardCoordinates,
         initialCoords: { x: number; y: number },
     ) {
         this.container = container;
@@ -79,16 +80,25 @@ export class BoardItem {
             boardItem.currentFigure.destroy();
             boardItem.isUnderAttack = false;
         }
+
         boardItem.currentFigure = this.currentFigure;
         boardItem.figureTexturesObject = this.figureTexturesObject;
         this.currentFigure.interactive = false;
         this.currentFigure.buttonMode = false;
+        boardItem.renderFigure();
+        boardItem.currentFigure.rotation = this.currentFigure.rotation;
         this.currentFigure.destroy();
         this.currentFigure = null;
         this.figureTexturesObject = null;
         this.currentBoardPath.buttonMode = false;
-        boardItem.render();
-        this.render();
+    }
+
+    rotate(app: Application) {
+        let currentRotation = this.currentFigure.rotation;
+        const targetRotation = currentRotation + Math.PI; // Rotate up to 180 degrees (π radians)
+        const duration = 2000; // Animation duration in milliseconds
+
+        rotateContainer(app, this.currentFigure, targetRotation, duration);
     }
 
     moveFigure() {
@@ -150,7 +160,6 @@ export class BoardItem {
         });
 
         this.currentBoardPath = boardPath;
-
         this.container.addChild(boardPath);
     }
 
@@ -163,7 +172,6 @@ export class BoardItem {
         figure.anchor.set(0.5, 0.5);
         figure.width = this.figSize;
         figure.height = this.figSize;
-
         figure.interactive = true;
         figure.buttonMode = true;
         figure.zIndex = 50;
@@ -183,16 +191,7 @@ export class BoardItem {
         this.moveFigure();
     }
 
-    public rotate() {
-        if (!this.currentFigure) {
-            return;
-        }
-
-        this.currentFigure.rotation += Math.PI * 2 * 0.5;
-    }
-
     private prepareFigureToMove() {
-        console.log("prepareFigureToMove");
         window.dispatchEvent(
             new CustomEvent("prepareFigureToMove", {
                 detail: this,
@@ -201,7 +200,6 @@ export class BoardItem {
     }
 
     private moveFigureHere() {
-        console.log("moveFigureHere");
         window.dispatchEvent(
             new CustomEvent("moveFigureHere", {
                 detail: this,
