@@ -1,15 +1,29 @@
 import { ChessFigure } from "../interfaces/ChessFigure";
 import { Texture } from "pixi.js";
 import { BoardCoordinates } from "../interfaces/BoardCoordinates";
-import { FigureColor } from "../entities/BoardItem";
+import { BoardItem, FigureColor } from "../entities/BoardItem";
+import { Howl } from "howler";
+
+const move = new Howl({
+    src: ["../assets/chess/audio/move/pawn.mp3"],
+});
+
+const capture = new Howl({
+    src: ["../assets/chess/audio/capture/pawn.mp3"],
+});
 
 export class Pawn extends ChessFigure {
+    soundSources = {
+        move: move,
+        capture: capture,
+    };
     black = {
         availableUnits: 8,
         isInitialPlace: (row: number, col: number) => row === 1,
         normal: Texture.from("b_pawn_ns.png"),
         active: Texture.from("b_pawn.png"),
     };
+
     white = {
         availableUnits: 8,
         isInitialPlace: (row: number, col: number) => row === 6,
@@ -17,8 +31,20 @@ export class Pawn extends ChessFigure {
         active: Texture.from("w_pawn.png"),
     };
 
-    getAvailablePlaces(row: number, col: number, boardItems: any[][]): BoardCoordinates[] {
+    playMoveAudio(): void {
+        this.soundSources.move.play();
+    }
+
+    playCaptureAudio(): void {
+        this.soundSources.capture.play();
+    }
+
+    getAvailablePlaces(row: number, col: number, boardItems: BoardItem[][]): BoardCoordinates[] {
         const attacker = boardItems[row][col];
+        if (!attacker?.figureTexturesObject) {
+            return [];
+        }
+
         const direction = attacker.figureTexturesObject.color === FigureColor.white ? -1 : 1;
         const possibleMoves: BoardCoordinates[] = [];
 
@@ -42,7 +68,11 @@ export class Pawn extends ChessFigure {
             return [];
         }
 
-        if (Pawn.isEmptyField(boardItems, initialMovePos) && initialPlaceCheck(row, col)) {
+        if (
+            Pawn.isEmptyField(boardItems, regularMovePos) &&
+            Pawn.isEmptyField(boardItems, initialMovePos) &&
+            initialPlaceCheck(row, col)
+        ) {
             possibleMoves.push(initialMovePos);
         }
 

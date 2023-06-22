@@ -3,8 +3,26 @@ import { Texture } from "pixi.js";
 import { BoardCoordinates } from "../interfaces/BoardCoordinates";
 import { isInsideBorder } from "../helpers/isInsideBorder";
 import { BoardItem } from "../entities/BoardItem";
+import { Howl } from "howler";
+
+const move = new Howl({
+    src: ["../assets/chess/audio/move/pawn.mp3"],
+});
 
 export class Knight extends ChessFigure {
+    soundSources = {
+        move: move,
+        capture: move,
+    };
+
+    playMoveAudio(): void {
+        this.soundSources.move.play();
+    }
+
+    playCaptureAudio(): void {
+        this.soundSources.capture.play();
+    }
+
     black = {
         availableUnits: 2,
         isInitialPlace: (row: number, col: number) => (row === 0 && col === 1) || (row === 0 && col === 6),

@@ -2,6 +2,7 @@ import { Application, Container, Sprite, Texture } from "pixi.js";
 import { BoardCoordinates } from "../interfaces/BoardCoordinates";
 import { ChessFigureSide } from "../interfaces/ChessFigureSide";
 import { rotateContainer } from "../helpers/rotateContainer";
+import { Howl } from "howler";
 
 export enum FigureColor {
     black = "black",
@@ -12,6 +13,8 @@ export interface Figure {
     color: FigureColor;
     availableMoves: (row: number, col: number, boardItems: any[][]) => BoardCoordinates[];
     figureTextures: ChessFigureSide;
+    playMoveAudio(): void;
+    playCaptureAudio(): void;
 }
 
 export class BoardItem {
@@ -79,6 +82,9 @@ export class BoardItem {
             boardItem.currentFigure.buttonMode = false;
             boardItem.currentFigure.destroy();
             boardItem.isUnderAttack = false;
+            this.figureTexturesObject?.playCaptureAudio();
+        } else {
+            this.figureTexturesObject?.playMoveAudio();
         }
 
         boardItem.currentFigure = this.currentFigure;

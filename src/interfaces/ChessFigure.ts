@@ -1,12 +1,21 @@
 import { BoardCoordinates } from "./BoardCoordinates";
 import { ChessFigureSide } from "./ChessFigureSide";
 import { BoardItem } from "../entities/BoardItem";
+import { Howl } from "howler";
 
 export abstract class ChessFigure {
-    abstract getAvailablePlaces(row: number, col: number, boardItems: BoardItem[][]): BoardCoordinates[];
-
     abstract black: ChessFigureSide;
     abstract white: ChessFigureSide;
+    abstract soundSources: {
+        move: Howl;
+        capture: Howl;
+    };
+
+    abstract playMoveAudio(): void;
+
+    abstract playCaptureAudio(): void;
+
+    abstract getAvailablePlaces(row: number, col: number, boardItems: BoardItem[][]): BoardCoordinates[];
 
     protected static isEmptyField(boardItems: BoardItem[][], fieldCoords: BoardCoordinates) {
         try {

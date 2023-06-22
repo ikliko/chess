@@ -49,16 +49,22 @@ function getFigure(row: number, col: number): Figure | null {
         const fig = (figures as any)[figureKey];
         if (fig.white.availableUnits && fig.white.isInitialPlace(row, col)) {
             figure = {
+                ...fig,
                 color: FigureColor.white,
                 availableMoves: fig.getAvailablePlaces,
                 figureTextures: fig.white,
+                playMoveAudio: fig.playMoveAudio,
+                playCaptureAudio: fig.playCaptureAudio,
             } as Figure;
             fig.white.availableUnits--;
         } else if (fig.black.availableUnits && fig.black.isInitialPlace(row, col)) {
             figure = {
+                ...fig,
                 color: FigureColor.black,
                 availableMoves: fig.getAvailablePlaces,
                 figureTextures: fig.black,
+                playMoveAudio: fig.playMoveAudio,
+                playCaptureAudio: fig.playCaptureAudio,
             } as Figure;
             fig.black.availableUnits--;
         }
@@ -119,7 +125,6 @@ function renderBoardPath(gameplay: Container) {
         for (let colI = 0; colI < 8; colI++) {
             const boardPathTexture = boardTextureOrder[colI % 2];
             const figureTexture = getFigure(rowI, colI);
-
             const boardItem = new BoardItem(
                 gameplay,
                 figureTexture,
@@ -185,11 +190,10 @@ export default function getGameplayScene(app: Application) {
 
         rotateContainer(app, gameplay, targetRotation, duration);
 
-        const figureFields = boardItems.flat().filter((boardItem) => boardItem.currentFigure);
-
-        console.log(figureFields, figureFields.length);
-
-        figureFields.forEach((boardItem: BoardItem) => boardItem.rotate(app));
+        boardItems
+            .flat()
+            .filter((boardItem) => boardItem.currentFigure)
+            .forEach((boardItem: BoardItem) => boardItem.rotate(app));
     }
 
     window.addEventListener("moveFigureHere", (event) => {
@@ -202,7 +206,6 @@ export default function getGameplayScene(app: Application) {
         moveFigure.moveTo(moveTo);
         clearBoard();
         switchPlayer();
-
         rotateBoard();
     });
 
