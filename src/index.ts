@@ -1,7 +1,7 @@
 import { Application, Loader } from "pixi.js";
 import "./style.css";
-import getGameplayScene from "./scenes/gameplayScene";
-import { mainMenuScene } from "./scenes/mainMenuScene";
+import ChessScene from "./scenes/ChessScene";
+import { config } from "./config";
 
 declare const VERSION: string;
 
@@ -11,7 +11,7 @@ const gameHeight = 600;
 console.log(`Welcome from pixi-typescript-boilerplate ${VERSION}`);
 
 const app = new Application({
-    backgroundColor: 0xd3d3d3,
+    backgroundColor: 0x0f0f0f,
     width: gameWidth,
     height: gameHeight,
 });
@@ -22,18 +22,15 @@ window.onload = async (): Promise<void> => {
     document.body.appendChild(app.view);
     resizeCanvas();
 
-    const gameplay = getGameplayScene(app);
-    app.stage.addChild(gameplay);
-
-    const menu = mainMenuScene(app);
-    // app.stage.addChild(menu);
+    const chess = new ChessScene(app);
+    chess.render();
 };
 
 async function loadGameAssets(): Promise<void> {
     return new Promise((res, rej) => {
         const loader = Loader.shared;
 
-        loader.add("chess", "./assets/chess/spritesheet.json");
+        loader.add("chess", config.theme.spritesheet);
 
         loader.onComplete.once(() => res());
         loader.onError.once(() => rej());
