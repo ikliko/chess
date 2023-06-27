@@ -8,15 +8,13 @@ import { config } from "../config";
 export class BoardItem {
     field: Field;
     figure: Figure | null;
-    // @ts-ignore
-    currentFigure: Sprite | null;
-    // @ts-ignore
-    currentFieldState: Sprite;
+    currentFigure: Sprite | null = null;
+    currentFieldState: Sprite | null = null;
     protected isActive = false;
     protected container: Container;
     protected boardCoords: BoardCoords;
 
-    constructor(container: Container, field: Field, figure: Figure, boardCoords: BoardCoords) {
+    constructor(container: Container, field: Field, figure: Figure | null, boardCoords: BoardCoords) {
         this.container = container;
         this.field = field;
         this.figure = figure;
@@ -31,7 +29,7 @@ export class BoardItem {
     }
 
     public activateField() {
-        if (this.isActive) {
+        if (this.isActive || !this.currentFieldState) {
             return;
         }
 
@@ -48,14 +46,12 @@ export class BoardItem {
         field.x = this.field.coords.x;
         field.y = this.field.coords.y;
         field.on("pointerdown", () => this.moveToDispatcher());
-
         this.currentFieldState = field;
-
         this.container.addChild(field);
     }
 
     private renderFigure() {
-        if (!this.figure) {
+        if (!this.figure || !this.currentFieldState) {
             return;
         }
 
@@ -107,7 +103,7 @@ export class BoardItem {
     }
 
     private deactivateField() {
-        if (!this.isActive) {
+        if (!this.isActive || !this.currentFieldState) {
             return;
         }
 
@@ -138,9 +134,10 @@ export class BoardItem {
     }
 
     moveTo(boardItem: BoardItem) {
-        if (!this.currentFigure) {
+        if (!this.currentFigure || !this.currentFieldState) {
             return;
         }
+
         boardItem.currentFigure?.destroy();
         boardItem.currentFigure = null;
         boardItem.figure = null;
@@ -157,7 +154,7 @@ export class BoardItem {
     }
 
     private moveFigure() {
-        if (!this.currentFigure || !this.figure) {
+        if (!this.currentFigure || !this.figure || !this.currentFieldState) {
             return;
         }
 
