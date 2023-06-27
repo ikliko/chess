@@ -9,16 +9,23 @@ import { EntityTexture } from "../resources/EntityTexture";
 import { PawnResource } from "../resources/PawnResource";
 import { ChessBoardConfig } from "../interfaces/ChessBoardConfig";
 import { rotateContainer } from "../helpers/rotateContainer";
+import { SoundsManager } from "../entities/Figure";
+import { FigureActions } from "../enums/FigureActions";
+import { Knight } from "../models/Knight";
+import { KnightResource } from "../resources/KnightResource";
 
 export class ChessScene extends Scene {
     protected boardItems: any = [];
     protected players: FigureColor[] = [FigureColor.white, FigureColor.black];
     protected boardConfig: ChessBoardConfig | null = null;
     protected moveFigure: BoardItem | null = null;
+    protected isRunning = true;
+    protected soundsManager: SoundsManager;
 
     constructor(application: Application) {
         super(application);
 
+        this.soundsManager = new SoundsManager();
         this.loadConfig();
         this.initListeners();
     }
@@ -104,10 +111,13 @@ export class ChessScene extends Scene {
         });
 
         window.addEventListener("moveTo", ({ detail: boardItem }: any) => {
-            if (!this.moveFigure) {
+            if (!this.moveFigure || !this.moveFigure.figure) {
                 return;
             }
 
+            const action = boardItem.figure ? FigureActions.capture : FigureActions.move;
+
+            this.soundsManager.playFigureSound(this.moveFigure.figure, action);
             this.moveFigure.moveTo(boardItem);
             this.clearBoard();
             this.rotate();
@@ -125,12 +135,15 @@ export class ChessScene extends Scene {
 
         // @ts-ignore
         const { boardX, boardY, cellSize } = this.boardConfig;
+        const figSize = cellSize * 0.7;
+        const figPadding = cellSize - figSize;
+
         const boardItems = [];
         let row = 0;
         let col = 0;
         boardItems.push([
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[0],
@@ -144,8 +157,8 @@ export class ChessScene extends Scene {
                 null,
                 { row: 0, col: 0 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[1],
@@ -154,13 +167,22 @@ export class ChessScene extends Scene {
                         x: boardX + cellSize * 1,
                         y: boardY + cellSize * 0,
                     },
+                    { row, col: col },
+                ),
+                new Knight(
+                    FigureColor.black,
+                    KnightResource.black,
+                    figSize,
+                    {
+                        x: boardX + cellSize * 1 + figSize / 2 + figPadding / 2,
+                        y: boardY + cellSize * 0 + figSize / 2 + figPadding / 2,
+                    },
                     { row, col: col++ },
                 ),
-                null,
                 { row: 0, col: 1 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[0],
@@ -174,8 +196,8 @@ export class ChessScene extends Scene {
                 null,
                 { row: 0, col: 2 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[1],
@@ -189,8 +211,8 @@ export class ChessScene extends Scene {
                 null,
                 { row: 0, col: 3 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[0],
@@ -204,8 +226,8 @@ export class ChessScene extends Scene {
                 null,
                 { row: 0, col: 4 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[1],
@@ -219,8 +241,8 @@ export class ChessScene extends Scene {
                 null,
                 { row: 0, col: 5 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[0],
@@ -229,13 +251,22 @@ export class ChessScene extends Scene {
                         x: boardX + cellSize * 6,
                         y: boardY + cellSize * 0,
                     },
+                    { row, col: col },
+                ),
+                new Knight(
+                    FigureColor.black,
+                    KnightResource.black,
+                    figSize,
+                    {
+                        x: boardX + cellSize * 6 + figSize / 2 + figPadding / 2,
+                        y: boardY + cellSize * 0 + figSize / 2 + figPadding / 2,
+                    },
                     { row, col: col++ },
                 ),
-                null,
                 { row: 0, col: 6 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[1],
@@ -267,17 +298,14 @@ export class ChessScene extends Scene {
                     col: colI,
                 });
 
-                const figSize = cellSize * 0.7;
-                const figPadding = cellSize - figSize;
-                const figCoords = {
-                    x: coords.x + figSize / 2 + figPadding / 2,
-                    y: coords.y + figSize / 2 + figPadding / 2,
-                };
                 const boardCoords = {
                     row: rowI,
                     col: colI,
                 };
-
+                const figCoords = {
+                    x: coords.x + figSize / 2 + figPadding / 2,
+                    y: coords.y + figSize / 2 + figPadding / 2,
+                };
                 const pawn = new Pawn(FigureColor.black, PawnResource.black, figSize, figCoords, boardCoords);
 
                 // @ts-ignore
@@ -354,8 +382,8 @@ export class ChessScene extends Scene {
         col = 0;
 
         boardItems.push([
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[0],
@@ -369,8 +397,8 @@ export class ChessScene extends Scene {
                 null,
                 { row: 7, col: 0 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[1],
@@ -379,13 +407,22 @@ export class ChessScene extends Scene {
                         x: boardX + cellSize * 1,
                         y: boardY + cellSize * 7,
                     },
+                    { row, col: col },
+                ),
+                new Knight(
+                    FigureColor.white,
+                    KnightResource.white,
+                    figSize,
+                    {
+                        x: boardX + cellSize * 1 + figSize / 2 + figPadding / 2,
+                        y: boardY + cellSize * 7 + figSize / 2 + figPadding / 2,
+                    },
                     { row, col: col++ },
                 ),
-                null,
                 { row: 7, col: 1 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[0],
@@ -399,8 +436,8 @@ export class ChessScene extends Scene {
                 null,
                 { row: 7, col: 2 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[1],
@@ -414,8 +451,8 @@ export class ChessScene extends Scene {
                 null,
                 { row: 7, col: 3 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[0],
@@ -429,8 +466,8 @@ export class ChessScene extends Scene {
                 null,
                 { row: 7, col: 4 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[1],
@@ -444,8 +481,8 @@ export class ChessScene extends Scene {
                 null,
                 { row: 7, col: 5 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[0],
@@ -454,13 +491,22 @@ export class ChessScene extends Scene {
                         x: boardX + cellSize * 6,
                         y: boardY + cellSize * 7,
                     },
+                    { row, col: col },
+                ),
+                new Knight(
+                    FigureColor.white,
+                    KnightResource.white,
+                    figSize,
+                    {
+                        x: boardX + cellSize * 6 + figSize / 2 + figPadding / 2,
+                        y: boardY + cellSize * 7 + figSize / 2 + figPadding / 2,
+                    },
                     { row, col: col++ },
                 ),
-                null,
                 { row: 7, col: 6 },
             ),
-            // @ts-ignore
             new BoardItem(
+                // @ts-ignore
                 this.scene,
                 new Field(
                     boardTextureOrder[1],
@@ -480,6 +526,10 @@ export class ChessScene extends Scene {
     }
 
     private getCurrentPlayer() {
+        if (!this.isRunning) {
+            return null;
+        }
+
         return this.players[0];
     }
 
@@ -488,9 +538,11 @@ export class ChessScene extends Scene {
             return;
         }
 
-        const targetRotation = this.scene.rotation + Math.PI;
-
-        rotateContainer(this.scene, targetRotation, 2000);
+        const { duration, direction } = config.rotates.board;
+        const targetRotation = this.scene.rotation + Math.PI * direction;
+        this.isRunning = false;
+        rotateContainer(this.scene, targetRotation, duration);
+        setTimeout(() => (this.isRunning = true), duration);
 
         this.boardItems.flat().forEach((boardItem: BoardItem) => boardItem.rotate());
     }

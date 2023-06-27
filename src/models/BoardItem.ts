@@ -3,6 +3,7 @@ import { BoardCoords } from "../interfaces/BoardCoords";
 import { Figure } from "./Figure";
 import { Field } from "./Field";
 import { rotateContainer } from "../helpers/rotateContainer";
+import { config } from "../config";
 
 export class BoardItem {
     field: Field;
@@ -83,12 +84,12 @@ export class BoardItem {
     }
 
     private prepareMove() {
-        window.dispatchEvent(new CustomEvent("figureClick"));
         if (this.isActive) {
             this.moveToDispatcher();
 
             return;
         }
+        window.dispatchEvent(new CustomEvent("figureClick"));
 
         window.dispatchEvent(
             new CustomEvent("prepareMove", {
@@ -173,8 +174,10 @@ export class BoardItem {
             return;
         }
 
-        const targetRotation = this.currentFigure.rotation + Math.PI;
+        const { duration, direction } = config.rotates.figures;
 
-        rotateContainer(this.currentFigure, targetRotation, 2000);
+        const targetRotation = this.currentFigure.rotation + Math.PI * direction;
+
+        rotateContainer(this.currentFigure, targetRotation, duration);
     }
 }

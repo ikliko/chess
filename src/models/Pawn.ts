@@ -9,8 +9,6 @@ export class Pawn extends Figure {
 
         const possibleMoves: BoardCoords[] = [];
 
-        console.log(this.boardCoords);
-
         // regular move
         const regularMovePos = {
             ...this.boardCoords,
