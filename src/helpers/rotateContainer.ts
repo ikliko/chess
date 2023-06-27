@@ -1,11 +1,6 @@
-import { Application, Container, Sprite } from "pixi.js";
+import { Container, Sprite } from "pixi.js";
 
-export function rotateContainer(
-    app: Application,
-    pixiElement: Container | Sprite,
-    targetAngle: number,
-    duration: number,
-) {
+export function rotateContainer(pixiElement: Container | Sprite, targetAngle: number, duration: number) {
     const startAngle = pixiElement.rotation;
     const startTime = Date.now();
 
