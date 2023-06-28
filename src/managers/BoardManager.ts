@@ -11,25 +11,26 @@ import { FigureColor } from "../enums/FigureColor";
 import { KnightResource } from "../resources/KnightResource";
 import { Pawn } from "../models/Pawn";
 import { PawnResource } from "../resources/PawnResource";
+import { FieldColor } from "../enums/FieldColor";
 
 export class BoardManager {
     protected boardConfig: ChessBoardConfig | null = null;
     protected application: Application;
-    protected boardTextures: EntityTexture[];
+    protected boardTextures: any;
 
     constructor(application: Application) {
         this.application = application;
 
         this.loadConfig();
-        this.boardTextures = [
-            new EntityTexture(config.theme.fields.dark.active, config.theme.fields.dark.inactive),
-            new EntityTexture(config.theme.fields.light.active, config.theme.fields.light.inactive),
-        ];
+        this.boardTextures = {
+            [FieldColor.black]: new EntityTexture(config.theme.fields.dark.active, config.theme.fields.dark.inactive),
+            [FieldColor.white]: new EntityTexture(config.theme.fields.light.active, config.theme.fields.light.inactive),
+        };
     }
 
     makeBoardItem(
         container: Container,
-        fieldTexture: EntityTexture,
+        fieldColor: FieldColor,
         figureColor: FigureColor | null,
         figureType: FigureTypes | null,
         boardCoords: BoardCoords,
@@ -40,13 +41,10 @@ export class BoardManager {
 
         const { boardX, boardY, cellSize } = this.boardConfig;
 
-        const figSize = cellSize * 0.7;
-        const figPadding = cellSize - figSize;
-
         return new BoardItem(
             container,
             new Field(
-                fieldTexture,
+                this.boardTextures[fieldColor],
                 cellSize,
                 {
                     x: boardX + cellSize * boardCoords.col,

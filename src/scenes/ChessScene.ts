@@ -3,12 +3,12 @@ import { config } from "../config";
 import { BoardItem } from "../models/BoardItem";
 import { FigureColor } from "../enums/FigureColor";
 import { Scene } from "./Scene";
-import { EntityTexture } from "../resources/EntityTexture";
 import { rotateContainer } from "../helpers/rotateContainer";
 import { FigureActions } from "../enums/FigureActions";
 import { SoundsManager } from "../managers/SoundsManager";
 import { BoardManager } from "../managers/BoardManager";
 import { FigureTypes } from "../enums/FigureTypes";
+import { FieldColor } from "../enums/FieldColor";
 
 export class ChessScene extends Scene {
     protected boardItems: any = [];
@@ -93,158 +93,136 @@ export class ChessScene extends Scene {
             return;
         }
 
-        const boardTextureOrder: EntityTexture[] = [
-            new EntityTexture(config.theme.fields.dark.active, config.theme.fields.dark.inactive),
-            new EntityTexture(config.theme.fields.light.active, config.theme.fields.light.inactive),
-        ];
-
         let row = 0;
         let col = 0;
 
         const boardItems = [
             [
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
 
-                this.boardManager.makeBoardItem(
-                    this.scene,
-                    boardTextureOrder[1],
-                    FigureColor.black,
-                    FigureTypes.knight,
-                    { row, col: col++ },
-                ),
-                this.boardManager.makeBoardItem(
-                    this.scene,
-                    boardTextureOrder[0],
-                    FigureColor.black,
-                    FigureTypes.bishop,
-                    { row, col: col++ },
-                ),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.black, FigureTypes.knight, {
+                    row,
+                    col: col++,
+                }),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.black, FigureTypes.bishop, {
+                    row,
+                    col: col++,
+                }),
 
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], null, null, { row, col: col++ }),
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.black, null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.black, null, null, { row, col: col++ }),
 
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.black, FigureTypes.knight, {
+                    row,
+                    col: col++,
+                }),
 
-                this.boardManager.makeBoardItem(
-                    this.scene,
-                    boardTextureOrder[0],
-                    FigureColor.black,
-                    FigureTypes.knight,
-                    { row, col: col++ },
-                ),
-
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.black, null, null, { row, col: col++ }),
             ],
         ];
 
         col = 0;
         row++;
-        boardTextureOrder.reverse();
         boardItems.push([
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], FigureColor.black, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.black, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], FigureColor.black, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.black, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], FigureColor.black, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.black, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], FigureColor.black, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.black, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], FigureColor.black, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.black, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], FigureColor.black, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.black, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], FigureColor.black, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.black, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], FigureColor.black, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.black, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
         ]);
 
+        const colors = [FieldColor.white, FieldColor.black];
         for (let i = 0; i < 4; i++) {
             col = 0;
             row++;
-            boardTextureOrder.reverse();
             boardItems.push([
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], null, null, { row, col: col++ }),
-
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], null, null, { row, col: col++ }),
-
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], null, null, { row, col: col++ }),
-
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], null, null, { row, col: col++ }),
-
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], null, null, { row, col: col++ }),
-
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], null, null, { row, col: col++ }),
-
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], null, null, { row, col: col++ }),
-
-                this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, colors[0], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, colors[1], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, colors[0], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, colors[1], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, colors[0], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, colors[1], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, colors[0], null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, colors[1], null, null, { row, col: col++ }),
             ]);
+
+            colors.reverse();
         }
 
         col = 0;
         row++;
-        boardTextureOrder.reverse();
         boardItems.push([
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], FigureColor.white, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.white, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], FigureColor.white, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.white, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], FigureColor.white, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.white, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], FigureColor.white, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.white, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], FigureColor.white, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.white, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], FigureColor.white, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.white, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], FigureColor.white, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.white, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], FigureColor.white, FigureTypes.pawn, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.white, FigureTypes.pawn, {
                 row,
                 col: col++,
             }),
@@ -252,33 +230,34 @@ export class ChessScene extends Scene {
 
         col = 0;
         row++;
-        boardTextureOrder.reverse();
         boardItems.push([
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], null, null, { row, col: col++ }),
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, null, null, { row, col: col++ }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], FigureColor.white, FigureTypes.knight, {
-                row,
-                col: col++,
-            }),
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], FigureColor.white, FigureTypes.bishop, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.white, FigureTypes.knight, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], null, null, { row, col: col++ }),
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], null, null, { row, col: col++ }),
-
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], null, null, { row, col: col++ }),
-
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[0], FigureColor.white, FigureTypes.knight, {
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.white, FigureTypes.bishop, {
                 row,
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, boardTextureOrder[1], null, null, { row, col: col++ }),
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, null, null, { row, col: col++ }),
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
+
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.white, FigureTypes.knight, {
+                row,
+                col: col++,
+            }),
+
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
         ]);
 
         this.boardItems = boardItems;
+
+        return boardItems;
     }
 
     private getCurrentPlayer() {
