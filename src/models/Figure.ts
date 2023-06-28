@@ -23,6 +23,7 @@ export abstract class Figure extends ChessEntity {
     }
 
     abstract getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[];
+    abstract getAttackPositions(boardItems: BoardItem[][]): BoardCoords[];
 
     protected isInsideBoard({ col, row }: BoardCoords) {
         return !(col < 0 || col > 7 || row < 0 || row > 7);

@@ -4,6 +4,10 @@ import { BoardCoords } from "../interfaces/BoardCoords";
 
 export class Queen extends Figure {
     getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[] {
+        return this.getAttackPositions(boardItems);
+    }
+
+    getAttackPositions(boardItems: BoardItem[][]): BoardCoords[] {
         return [
             ...this.getUpMoves(boardItems),
             ...this.getDownMoves(boardItems),

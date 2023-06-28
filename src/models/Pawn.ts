@@ -9,7 +9,6 @@ export class Pawn extends Figure {
 
         const possibleMoves: BoardCoords[] = [];
 
-        // regular move
         const regularMovePos = {
             ...this.boardCoords,
             row: this.boardCoords.row + direction,
@@ -19,7 +18,6 @@ export class Pawn extends Figure {
             possibleMoves.push(regularMovePos);
         }
 
-        // // initial move
         const initialMovePos = {
             ...this.boardCoords,
             row: this.boardCoords.row + direction * 2,
@@ -33,26 +31,29 @@ export class Pawn extends Figure {
             possibleMoves.push(initialMovePos);
         }
 
-        // left attack
-        const leftAttackPos = {
-            row: regularMovePos.row,
-            col: this.boardCoords.col - 1,
-        };
-
-        if (this.isAttack(leftAttackPos, boardItems)) {
-            possibleMoves.push(leftAttackPos);
-        }
-
-        // right attack
-        const rightAttackPos = {
-            row: regularMovePos.row,
-            col: this.boardCoords.col + 1,
-        };
-
-        if (this.isAttack(rightAttackPos, boardItems)) {
-            possibleMoves.push(rightAttackPos);
-        }
+        possibleMoves.push(
+            ...this.getAttackPositions(boardItems)
+                .map(({ row, col }) => ({ coords: { row, col }, item: boardItems[row][col] }))
+                .filter(({ coords, item }) => item?.figure && item.figure.color !== this.color)
+                .map(({ coords }) => coords),
+        );
 
         return possibleMoves;
+    }
+
+    getAttackPositions(boardItems: BoardItem[][]): BoardCoords[] {
+        const direction = this.color === FigureColor.white ? -1 : 1;
+
+        return [
+            {
+                row: this.boardCoords.row + direction,
+                col: this.boardCoords.col - 1,
+            },
+
+            {
+                row: this.boardCoords.row + direction,
+                col: this.boardCoords.col + 1,
+            },
+        ];
     }
 }

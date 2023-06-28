@@ -172,7 +172,6 @@ export class BoardItem {
         }
 
         const { duration, direction } = config.rotates.figures;
-
         const targetRotation = this.currentFigure.rotation + Math.PI * direction;
 
         rotateContainer(this.currentFigure, targetRotation, duration);
