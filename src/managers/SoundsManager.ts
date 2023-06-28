@@ -6,6 +6,8 @@ import { Figure } from "../models/Figure";
 import { Pawn } from "../models/Pawn";
 import { Knight } from "../models/Knight";
 import { Bishop } from "../models/Bishop";
+import { Queen } from "../models/Queen";
+import { Rook } from "../models/Rook";
 
 export class SoundsManager {
     private sounds: any = {};
@@ -25,6 +27,18 @@ export class SoundsManager {
 
         if (figure instanceof Bishop) {
             this._playFigureSound(FigureTypes.bishop, action);
+
+            return;
+        }
+
+        if (figure instanceof Rook) {
+            this._playFigureSound(FigureTypes.rook, action);
+
+            return;
+        }
+
+        if (figure instanceof Queen) {
+            this._playFigureSound(FigureTypes.queen, action);
 
             return;
         }
