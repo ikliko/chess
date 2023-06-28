@@ -15,18 +15,19 @@ export abstract class Figure extends ChessEntity {
         this.color = color;
     }
 
-    protected static isEmptyField(boardItems: BoardItem[][], fieldCoords: BoardCoords) {
+    protected static isEmptyField(boardItems: BoardItem[][], fieldCoords: BoardCoords): boolean {
         try {
             return !boardItems[fieldCoords.row][fieldCoords.col].currentFigure;
         } catch (e) {}
 
-        return null;
+        return false;
     }
 
-    abstract getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[];
-    abstract getAttackPositions(boardItems: BoardItem[][]): BoardCoords[];
+    public abstract getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[];
 
-    protected isInsideBoard({ col, row }: BoardCoords) {
+    public abstract getAttackPositions(boardItems: BoardItem[][]): BoardCoords[];
+
+    protected isInsideBoard({ col, row }: BoardCoords): boolean {
         return !(col < 0 || col > 7 || row < 0 || row > 7);
     }
 
@@ -107,7 +108,7 @@ export abstract class Figure extends ChessEntity {
         return moves;
     }
 
-    protected getRightMoves(boardItems: BoardItem[][], limit = 0) {
+    protected getRightMoves(boardItems: BoardItem[][], limit = 0): BoardCoords[] {
         const moves: BoardCoords[] = [];
 
         if (this.boardCoords.col === 0) {

@@ -17,7 +17,7 @@ export class ChessEntity {
         this.boardCoords = boardCoords;
     }
 
-    isInitialPosition() {
+    public isInitialPosition() {
         if (this.coords.x !== this.initialCoords.x) {
             return false;
         }

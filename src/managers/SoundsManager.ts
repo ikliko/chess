@@ -9,9 +9,21 @@ import { Bishop } from "../models/Bishop";
 import { Queen } from "../models/Queen";
 import { Rook } from "../models/Rook";
 import { King } from "../models/King";
+import { FigureColor } from "../enums/FigureColor";
+
+type Sounds = {
+    [key in FigureTypes]?: {
+        [key in FigureActions]?: Howl | undefined;
+    };
+};
+
+type FigureConfig = {
+    sounds?: { [key in FigureActions]?: string };
+    textures: { [key in FigureColor]: { inactive: string; active: string } };
+};
 
 export class SoundsManager {
-    private sounds: any = {};
+    private sounds: Sounds = {};
 
     playFigureSound(figure: Figure, action: FigureActions) {
         if (figure instanceof Pawn) {
@@ -58,28 +70,38 @@ export class SoundsManager {
             };
         }
 
+        // @ts-ignore
         if (this.sounds[type][action] === undefined) {
+            // @ts-ignore
             this.sounds[type][action] = this.getSound(type, action);
         }
 
+        // @ts-ignore
         if (this.sounds[type][action]) {
+            // @ts-ignore
             this.sounds[type][action].play();
         }
     }
 
     private getSound(type: FigureTypes, action: FigureActions): Howl | null {
-        try {
-            const figureConfig: any = config.theme.figures[type];
+        const figureConfig: FigureConfig = config.theme.figures[type];
 
-            const soundResourcePath = figureConfig?.sounds[action];
+        if (!figureConfig?.sounds || !figureConfig.sounds[action]) {
+            return this.getDefaultSounds(action);
+        }
 
-            if (soundResourcePath) {
-                return new Howl({
-                    src: [soundResourcePath],
-                });
-            }
-        } catch (e) {}
+        const soundResourcePath = figureConfig.sounds[action];
 
+        if (soundResourcePath) {
+            return new Howl({
+                src: [soundResourcePath],
+            });
+        }
+
+        return this.getDefaultSounds(action);
+    }
+
+    private getDefaultSounds(action: FigureActions): Howl | null {
         const defaultSoundPath = config.theme.defaultSounds[action];
 
         if (!defaultSoundPath) {

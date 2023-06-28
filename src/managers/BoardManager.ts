@@ -23,10 +23,14 @@ import { QueenResource } from "../resources/QueenResource";
 import { King } from "../models/King";
 import { KingResource } from "../resources/KingResource";
 
+type BoardTextures = {
+    [key in FieldColor]: EntityTexture;
+};
+
 export class BoardManager {
     protected boardConfig: ChessBoardConfig | null = null;
     protected application: Application;
-    protected boardTextures: any;
+    protected boardTextures: BoardTextures;
 
     constructor(application: Application) {
         this.application = application;
@@ -38,15 +42,15 @@ export class BoardManager {
         };
     }
 
-    makeBoardItem(
+    public makeBoardItem(
         container: Container,
         fieldColor: FieldColor,
         figureColor: FigureColor | null,
         figureType: FigureTypes | null,
         boardCoords: BoardCoords,
-    ) {
+    ): BoardItem {
         if (!this.boardConfig) {
-            return;
+            throw new Error("no config");
         }
 
         const { boardX, boardY, cellSize } = this.boardConfig;
@@ -58,6 +62,23 @@ export class BoardManager {
         const figure = this.makeFigure(figureType, figureColor, boardCoords);
 
         return new BoardItem(container, field, figure, boardCoords);
+    }
+
+    public drawPlaceholder(): Graphics {
+        if (!this.boardConfig) {
+            throw new Error("Config is not defined");
+        }
+
+        const { boardX, boardY, fullBoardSize } = this.boardConfig;
+
+        const board = new Graphics();
+        board.beginFill(0xff0000);
+        board.drawRect(boardX, boardY, fullBoardSize, fullBoardSize);
+        board.endFill();
+        board.interactive = true;
+        board.on("pointerdown", () => window.dispatchEvent(new CustomEvent("clearBoard")));
+
+        return board;
     }
 
     private loadConfig(): void {
@@ -76,23 +97,6 @@ export class BoardManager {
             boardX,
             boardY,
         };
-    }
-
-    drawPlaceholder(): Graphics {
-        if (!this.boardConfig) {
-            throw new Error("Config is not defined");
-        }
-
-        const { boardX, boardY, fullBoardSize } = this.boardConfig;
-
-        const board = new Graphics();
-        board.beginFill(0xff0000);
-        board.drawRect(boardX, boardY, fullBoardSize, fullBoardSize);
-        board.endFill();
-        board.interactive = true;
-        board.on("pointerdown", () => window.dispatchEvent(new CustomEvent("clearBoard")));
-
-        return board;
     }
 
     private makeFigure(
@@ -125,7 +129,7 @@ export class BoardManager {
         return null;
     }
 
-    private makeField(color: FieldColor, coords: Coords, boardCoords: BoardCoords) {
+    private makeField(color: FieldColor, coords: Coords, boardCoords: BoardCoords): Field {
         if (!this.boardConfig) {
             throw new Error("Config is not defined");
         }

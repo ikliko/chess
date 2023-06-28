@@ -4,7 +4,7 @@ import { Figure } from "./Figure";
 import { FigureColor } from "../enums/FigureColor";
 
 export class Pawn extends Figure {
-    getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[] {
+    public getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[] {
         const direction = this.color === FigureColor.white ? -1 : 1;
 
         const possibleMoves: BoardCoords[] = [];
@@ -41,7 +41,7 @@ export class Pawn extends Figure {
         return possibleMoves;
     }
 
-    getAttackPositions(boardItems: BoardItem[][]): BoardCoords[] {
+    public getAttackPositions(boardItems: BoardItem[][]): BoardCoords[] {
         const direction = this.color === FigureColor.white ? -1 : 1;
 
         return [

@@ -10,14 +10,17 @@ export abstract class Scene {
 
     abstract render(): void;
 
+    protected abstract loadScene(): void;
+
     protected getScene(): Container {
         if (!this.scene) {
             this.loadScene();
         }
 
-        // @ts-ignore
+        if (!this.scene) {
+            throw new Error("no scene");
+        }
+
         return this.scene;
     }
-
-    protected abstract loadScene(): void;
 }

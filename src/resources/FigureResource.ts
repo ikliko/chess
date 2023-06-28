@@ -5,13 +5,15 @@ import { EntityTexture } from "./EntityTexture";
 export class FigureResource {
     protected static figure: FigureTypes;
 
-    static get white() {
+    static get white(): EntityTexture {
         const { white } = config.theme.figures[this.figure].textures;
+
         return new EntityTexture(white.active, white.inactive);
     }
 
-    static get black() {
+    static get black(): EntityTexture {
         const { black } = config.theme.figures[this.figure].textures;
+
         return new EntityTexture(black.active, black.inactive);
     }
 }

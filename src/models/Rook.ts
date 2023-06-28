@@ -3,11 +3,11 @@ import { BoardItem } from "./BoardItem";
 import { BoardCoords } from "../interfaces/BoardCoords";
 
 export class Rook extends Figure {
-    getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[] {
+    public getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[] {
         return this.getAttackPositions(boardItems);
     }
 
-    getAttackPositions(boardItems: BoardItem[][]): BoardCoords[] {
+    public getAttackPositions(boardItems: BoardItem[][]): BoardCoords[] {
         return [
             ...this.getUpMoves(boardItems),
             ...this.getDownMoves(boardItems),

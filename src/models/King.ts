@@ -5,7 +5,7 @@ import { BoardCoords } from "../interfaces/BoardCoords";
 export class King extends Figure {
     check = false;
 
-    getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[] {
+    public getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[] {
         const moves: BoardCoords[] = this.getAttackPositions(boardItems);
 
         this.checkPositions(boardItems, moves);
@@ -65,7 +65,7 @@ export class King extends Figure {
         return moves;
     }
 
-    getAttackPositions(boardItems: BoardItem[][]): BoardCoords[] {
+    public getAttackPositions(boardItems: BoardItem[][]): BoardCoords[] {
         return [
             ...this.getUpMoves(boardItems, 1),
             ...this.getDownMoves(boardItems, 1),
@@ -78,7 +78,7 @@ export class King extends Figure {
         ];
     }
 
-    checkPositions(boardItems: BoardItem[][], moves: BoardCoords[]) {
+    public checkPositions(boardItems: BoardItem[][], moves: BoardCoords[]): void {
         const unavailableLocations: (BoardCoords | undefined)[] = boardItems
             .flat()
             .filter(({ figure }) => figure && figure.color !== this.color)

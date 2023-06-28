@@ -12,7 +12,7 @@ import { FieldColor } from "../enums/FieldColor";
 import { BoardCoords } from "../interfaces/BoardCoords";
 
 export class ChessScene extends Scene {
-    protected boardItems: any = [];
+    protected boardItems: BoardItem[][] = [];
     protected players: FigureColor[] = [FigureColor.white, FigureColor.black];
     protected moveFigure: BoardItem | null = null;
     protected isRunning = true;
@@ -29,16 +29,15 @@ export class ChessScene extends Scene {
         this.initListeners();
     }
 
-    protected clearBoard() {
-        this.moveFigure = null;
-        this.boardItems.flat().forEach((item: BoardItem) => item.deactivate());
+    public start(): void {
+        this.isStarted = true;
     }
 
-    render(): void {
+    public render(): void {
         this.application.stage.addChild(this.getScene());
     }
 
-    onHold() {
+    public onHold(): void {
         this.isStarted = false;
 
         const spinning = () => {
@@ -57,8 +56,9 @@ export class ChessScene extends Scene {
         spinning();
     }
 
-    start() {
-        this.isStarted = true;
+    protected clearBoard(): void {
+        this.moveFigure = null;
+        this.boardItems.flat().forEach((item: BoardItem) => item.deactivate());
     }
 
     protected loadScene(): void {
@@ -78,8 +78,14 @@ export class ChessScene extends Scene {
         this.getBoard();
     }
 
-    private initListeners() {
-        window.addEventListener("prepareMove", ({ detail: boardItem }: any) => {
+    private initListeners(): void {
+        window.addEventListener("prepareMove", (event) => {
+            const boardItem: BoardItem = (<CustomEvent>event).detail;
+
+            if (!boardItem.figure) {
+                return;
+            }
+
             if (boardItem.figure.color !== this.getCurrentPlayer()) {
                 return;
             }
@@ -96,7 +102,9 @@ export class ChessScene extends Scene {
             this.moveFigure = boardItem;
         });
 
-        window.addEventListener("moveTo", ({ detail: boardItem }: any) => {
+        window.addEventListener("moveTo", (event) => {
+            const boardItem: BoardItem = (<CustomEvent>event).detail;
+
             if (!this.moveFigure || !this.moveFigure.figure) {
                 return;
             }
@@ -111,7 +119,7 @@ export class ChessScene extends Scene {
         });
 
         window.addEventListener("castle", (event) => {
-            const boardItem: BoardItem = (<any>event).detail;
+            const boardItem: BoardItem = (<CustomEvent>event).detail;
 
             if (!boardItem.figure) {
                 return;
@@ -127,7 +135,7 @@ export class ChessScene extends Scene {
         window.addEventListener("clearBoard", () => this.clearBoard());
     }
 
-    private getBoard() {
+    private getBoard(): void {
         if (!this.scene) {
             return;
         }
@@ -135,7 +143,7 @@ export class ChessScene extends Scene {
         let row = 0;
         let col = 0;
 
-        const boardItems = [
+        const boardItems: BoardItem[][] = [
             [
                 this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.black, FigureTypes.rook, {
                     row,
@@ -330,11 +338,9 @@ export class ChessScene extends Scene {
         ]);
 
         this.boardItems = boardItems;
-
-        return boardItems;
     }
 
-    private getCurrentPlayer() {
+    private getCurrentPlayer(): FigureColor | null {
         if (!this.isRunning) {
             return null;
         }
@@ -342,7 +348,7 @@ export class ChessScene extends Scene {
         return this.players[0];
     }
 
-    private rotate() {
+    private rotate(): void {
         if (!this.scene) {
             return;
         }
@@ -356,11 +362,11 @@ export class ChessScene extends Scene {
         this.boardItems.flat().forEach((boardItem: BoardItem) => boardItem.rotate());
     }
 
-    private switchPlayer() {
+    private switchPlayer(): void {
         this.players.reverse();
     }
 
-    private checkRightCastle(boardCoords: BoardCoords) {
+    private checkRightCastle(boardCoords: BoardCoords): void {
         if (boardCoords.col === 6) {
             this.moveFigure = this.boardItems[boardCoords.row][7];
             if (!this.moveFigure) {
@@ -371,7 +377,7 @@ export class ChessScene extends Scene {
         }
     }
 
-    private checkLeftCastle(boardCoords: BoardCoords) {
+    private checkLeftCastle(boardCoords: BoardCoords): void {
         if (boardCoords.col === 2) {
             this.moveFigure = this.boardItems[boardCoords.row][0];
             if (!this.moveFigure) {

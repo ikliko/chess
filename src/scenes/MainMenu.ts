@@ -2,6 +2,10 @@ import { Scene } from "./Scene";
 import { Container, Graphics, Text, TextStyle } from "pixi.js";
 
 export class MainMenu extends Scene {
+    render(): void {
+        this.application.stage.addChild(this.getScene());
+    }
+
     protected loadScene(): void {
         const menu = new Container();
         const redRect = new Graphics();
@@ -20,8 +24,6 @@ export class MainMenu extends Scene {
             fontSize: 70,
             fontFamily: "Arial",
             fontWeight: "bold",
-            // stroke: 0xff0000,
-            // strokeThickness: 2,
             dropShadow: true,
             dropShadowAlpha: 1,
             dropShadowAngle: 0.1,
@@ -44,9 +46,5 @@ export class MainMenu extends Scene {
         menu.addChild(playBtn);
 
         this.scene = menu;
-    }
-
-    render(): void {
-        this.application.stage.addChild(this.getScene());
     }
 }

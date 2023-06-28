@@ -33,7 +33,6 @@ export const brownGreyTheme = {
                 },
             },
         },
-
         pawn: {
             sounds: {
                 move: "../assets/chess/audio/move/pawn.mp3",

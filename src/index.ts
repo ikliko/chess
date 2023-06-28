@@ -1,8 +1,8 @@
 import { Application, Loader } from "pixi.js";
-import "./style.css";
 import { config } from "./config";
 import { ChessScene } from "./scenes/ChessScene";
 import { MainMenu } from "./scenes/MainMenu";
+import "./style.css";
 
 declare const VERSION: string;
 
