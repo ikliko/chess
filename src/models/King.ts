@@ -10,6 +10,58 @@ export class King extends Figure {
 
         this.checkPositions(boardItems, moves);
 
+        const rooks = boardItems
+            .flat()
+            .filter(({ figure }) => figure && figure.color === this.color && figure.isInitialPosition());
+
+        const right = moves.find(({ row, col }) => this.boardCoords.col + 1 === col && this.boardCoords.row === row);
+
+        if (this.isInitialPosition() && right) {
+            const rook = rooks.find(({ figure }) => figure && figure.boardCoords.col > this.boardCoords.col);
+
+            if (rook && rook.figure && rook.figure.isInitialPosition()) {
+                // check free to the rook
+                let isCastleAvailable = true;
+                for (let col = this.boardCoords.col + 1; col < rook.figure.boardCoords.col; col++) {
+                    if (boardItems[this.boardCoords.row][col].figure) {
+                        isCastleAvailable = false;
+                        break;
+                    }
+                }
+
+                if (isCastleAvailable) {
+                    moves.push({
+                        ...this.boardCoords,
+                        col: this.boardCoords.col + 2,
+                    });
+                }
+            }
+        }
+
+        const left = moves.find(({ row, col }) => this.boardCoords.col - 1 === col && this.boardCoords.row === row);
+
+        if (this.isInitialPosition() && left) {
+            const rook = rooks.find(({ figure }) => figure && figure.boardCoords.col < this.boardCoords.col);
+
+            if (rook && rook.figure && rook.figure.isInitialPosition()) {
+                // check free to the rook
+                let isCastleAvailable = true;
+                for (let col = this.boardCoords.col - 1; col > 0; col--) {
+                    if (boardItems[this.boardCoords.row][col].figure) {
+                        isCastleAvailable = false;
+                        break;
+                    }
+                }
+
+                if (isCastleAvailable) {
+                    moves.push({
+                        ...this.boardCoords,
+                        col: this.boardCoords.col - 2,
+                    });
+                }
+            }
+        }
+
         return moves;
     }
 

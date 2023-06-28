@@ -7,6 +7,7 @@ import { BoardItem } from "./BoardItem";
 
 export abstract class Figure extends ChessEntity {
     color: FigureColor;
+    isPlayed = false;
 
     constructor(color: FigureColor, textures: EntityTexture, size: number, coords: Coords, boardCoords: BoardCoords) {
         super(textures, size, coords, boardCoords);

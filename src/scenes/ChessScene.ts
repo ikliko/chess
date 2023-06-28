@@ -9,14 +9,17 @@ import { SoundsManager } from "../managers/SoundsManager";
 import { BoardManager } from "../managers/BoardManager";
 import { FigureTypes } from "../enums/FigureTypes";
 import { FieldColor } from "../enums/FieldColor";
+import { BoardCoords } from "../interfaces/BoardCoords";
 
 export class ChessScene extends Scene {
     protected boardItems: any = [];
     protected players: FigureColor[] = [FigureColor.white, FigureColor.black];
     protected moveFigure: BoardItem | null = null;
     protected isRunning = true;
+    protected isStarted = false;
     protected soundsManager: SoundsManager;
     protected boardManager: BoardManager;
+    protected rotates: number = 0;
 
     constructor(application: Application) {
         super(application);
@@ -33,6 +36,29 @@ export class ChessScene extends Scene {
 
     render(): void {
         this.application.stage.addChild(this.getScene());
+    }
+
+    onHold() {
+        this.isStarted = false;
+
+        const spinning = () => {
+            this.rotate();
+            this.rotates++;
+
+            setTimeout(() => {
+                if (this.isStarted && this.rotates % 2 === 0) {
+                    return;
+                }
+
+                spinning();
+            }, config.rotates.board.duration * 1.1);
+        };
+
+        spinning();
+    }
+
+    start() {
+        this.isStarted = true;
     }
 
     protected loadScene(): void {
@@ -54,9 +80,9 @@ export class ChessScene extends Scene {
 
     private initListeners() {
         window.addEventListener("prepareMove", ({ detail: boardItem }: any) => {
-            // if (boardItem.figure.color !== this.getCurrentPlayer()) {
-            //     return;
-            // }
+            if (boardItem.figure.color !== this.getCurrentPlayer()) {
+                return;
+            }
 
             this.clearBoard();
 
@@ -80,10 +106,23 @@ export class ChessScene extends Scene {
             this.soundsManager.playFigureSound(this.moveFigure.figure, action);
             this.moveFigure.moveTo(boardItem);
             this.clearBoard();
-            // this.rotate();
-            // this.switchPlayer();
+            this.rotate();
+            this.switchPlayer();
         });
 
+        window.addEventListener("castle", (event) => {
+            const boardItem: BoardItem = (<any>event).detail;
+
+            if (!boardItem.figure) {
+                return;
+            }
+
+            this.checkRightCastle(boardItem.figure.boardCoords);
+            this.checkLeftCastle(boardItem.figure.boardCoords);
+
+            this.clearBoard();
+            this.rotate();
+        });
         window.addEventListener("figureClick", () => this.clearBoard());
         window.addEventListener("clearBoard", () => this.clearBoard());
     }
@@ -319,5 +358,27 @@ export class ChessScene extends Scene {
 
     private switchPlayer() {
         this.players.reverse();
+    }
+
+    private checkRightCastle(boardCoords: BoardCoords) {
+        if (boardCoords.col === 6) {
+            this.moveFigure = this.boardItems[boardCoords.row][7];
+            if (!this.moveFigure) {
+                return;
+            }
+
+            this.moveFigure.moveTo(this.boardItems[boardCoords.row][5]);
+        }
+    }
+
+    private checkLeftCastle(boardCoords: BoardCoords) {
+        if (boardCoords.col === 2) {
+            this.moveFigure = this.boardItems[boardCoords.row][0];
+            if (!this.moveFigure) {
+                return;
+            }
+
+            this.moveFigure.moveTo(this.boardItems[boardCoords.row][3]);
+        }
     }
 }

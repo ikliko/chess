@@ -4,7 +4,7 @@ export abstract class Scene {
     protected application: Application;
     protected scene: Container | null = null;
 
-    protected constructor(application: Application) {
+    constructor(application: Application) {
         this.application = application;
     }
 

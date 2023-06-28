@@ -2,6 +2,7 @@ import { Application, Loader } from "pixi.js";
 import "./style.css";
 import { config } from "./config";
 import { ChessScene } from "./scenes/ChessScene";
+import { MainMenu } from "./scenes/MainMenu";
 
 declare const VERSION: string;
 
@@ -24,6 +25,12 @@ window.onload = async (): Promise<void> => {
 
     const chess = new ChessScene(app);
     chess.render();
+    chess.onHold();
+
+    const menu = new MainMenu(app);
+    menu.render();
+
+    window.addEventListener("startGame", () => chess.start());
 };
 
 async function loadGameAssets(): Promise<void> {

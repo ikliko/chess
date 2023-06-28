@@ -9,7 +9,7 @@ export const config = {
         },
         figures: {
             duration: 1500,
-            direction: 5, // 1 - left | -1 - right for interesting effects you can place any odd number
+            direction: 1, // 1 - left | -1 - right for interesting effects you can place any odd number
         },
     },
 };

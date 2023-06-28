@@ -4,6 +4,7 @@ import { Figure } from "./Figure";
 import { Field } from "./Field";
 import { rotateContainer } from "../helpers/rotateContainer";
 import { config } from "../config";
+import { King } from "./King";
 
 export class BoardItem {
     field: Field;
@@ -151,6 +152,22 @@ export class BoardItem {
         this.currentFigure = null;
         this.currentFieldState.interactive = false;
         this.currentFieldState.buttonMode = false;
+
+        if (!boardItem.figure) {
+            return;
+        }
+
+        boardItem.figure.isPlayed = true;
+
+        const colDiff = Math.abs(this.boardCoords.col - boardItem.figure.boardCoords.col);
+
+        if (boardItem.figure instanceof King && colDiff > 1) {
+            window.dispatchEvent(
+                new CustomEvent("castle", {
+                    detail: boardItem,
+                }),
+            );
+        }
     }
 
     private moveFigure() {
