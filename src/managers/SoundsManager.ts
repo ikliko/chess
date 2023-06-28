@@ -5,6 +5,7 @@ import { FigureActions } from "../enums/FigureActions";
 import { Figure } from "../models/Figure";
 import { Pawn } from "../models/Pawn";
 import { Knight } from "../models/Knight";
+import { Bishop } from "../models/Bishop";
 
 export class SoundsManager {
     private sounds: any = {};
@@ -18,6 +19,12 @@ export class SoundsManager {
 
         if (figure instanceof Knight) {
             this._playFigureSound(FigureTypes.knight, action);
+
+            return;
+        }
+
+        if (figure instanceof Bishop) {
+            this._playFigureSound(FigureTypes.bishop, action);
 
             return;
         }

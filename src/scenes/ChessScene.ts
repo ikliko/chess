@@ -80,8 +80,8 @@ export class ChessScene extends Scene {
             this.soundsManager.playFigureSound(this.moveFigure.figure, action);
             this.moveFigure.moveTo(boardItem);
             this.clearBoard();
-            this.rotate();
-            this.switchPlayer();
+            // this.rotate();
+            // this.switchPlayer();
         });
 
         window.addEventListener("figureClick", () => this.clearBoard());
@@ -245,7 +245,10 @@ export class ChessScene extends Scene {
 
             this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
             this.boardManager.makeBoardItem(this.scene, FieldColor.black, null, null, { row, col: col++ }),
-            this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.white, FigureTypes.bishop, {
+                row,
+                col: col++,
+            }),
 
             this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.white, FigureTypes.knight, {
                 row,

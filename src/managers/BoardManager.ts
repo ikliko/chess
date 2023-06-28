@@ -12,6 +12,8 @@ import { KnightResource } from "../resources/KnightResource";
 import { Pawn } from "../models/Pawn";
 import { PawnResource } from "../resources/PawnResource";
 import { FieldColor } from "../enums/FieldColor";
+import { Bishop } from "../models/Bishop";
+import { BishopResource } from "../resources/BishopResource";
 
 export class BoardManager {
     protected boardConfig: ChessBoardConfig | null = null;
@@ -126,6 +128,16 @@ export class BoardManager {
         }
 
         if (figureType === FigureTypes.bishop) {
+            return new Bishop(
+                FigureColor[color],
+                BishopResource[color],
+                figSize,
+                {
+                    x: boardX + cellSize * boardCoords.col + figSize / 2 + figPaddings,
+                    y: boardY + cellSize * boardCoords.row + figSize / 2 + figPaddings,
+                },
+                boardCoords,
+            );
         }
 
         return null;
