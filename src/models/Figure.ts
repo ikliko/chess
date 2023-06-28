@@ -14,16 +14,18 @@ export abstract class Figure extends ChessEntity {
         this.color = color;
     }
 
-    protected isInsideBoard({ col, row }: BoardCoords) {
-        return !(col < 0 || col > 7 || row < 0 || row > 7);
-    }
-
     protected static isEmptyField(boardItems: BoardItem[][], fieldCoords: BoardCoords) {
         try {
             return !boardItems[fieldCoords.row][fieldCoords.col].currentFigure;
         } catch (e) {}
 
         return null;
+    }
+
+    abstract getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[];
+
+    protected isInsideBoard({ col, row }: BoardCoords) {
+        return !(col < 0 || col > 7 || row < 0 || row > 7);
     }
 
     protected isAttack(defenderCoords: BoardCoords, boardItems: BoardItem[][]) {
@@ -41,5 +43,237 @@ export abstract class Figure extends ChessEntity {
         return false;
     }
 
-    abstract getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[];
+    protected getUpMoves(boardItems: BoardItem[][], limit = 0): BoardCoords[] {
+        const moves: BoardCoords[] = [];
+
+        if (this.boardCoords.row === 0) {
+            return moves;
+        }
+
+        for (let row = this.boardCoords.row - 1; row > -1; row--) {
+            const coordsCheck = {
+                ...this.boardCoords,
+                row,
+            };
+
+            if (!Figure.isEmptyField(boardItems, coordsCheck) && !this.isAttack(coordsCheck, boardItems)) {
+                break;
+            }
+
+            moves.push(coordsCheck);
+
+            if (!Figure.isEmptyField(boardItems, coordsCheck) && this.isAttack(coordsCheck, boardItems)) {
+                break;
+            }
+
+            if (limit && limit === moves.length) {
+                return moves;
+            }
+        }
+
+        return moves;
+    }
+
+    protected getDownMoves(boardItems: BoardItem[][], limit = 0): BoardCoords[] {
+        const moves: BoardCoords[] = [];
+
+        if (this.boardCoords.row === 7) {
+            return moves;
+        }
+
+        for (let row = this.boardCoords.row + 1; row < 8; row++) {
+            const coordsCheck = {
+                ...this.boardCoords,
+                row,
+            };
+
+            if (!Figure.isEmptyField(boardItems, coordsCheck) && !this.isAttack(coordsCheck, boardItems)) {
+                break;
+            }
+
+            moves.push(coordsCheck);
+
+            if (!Figure.isEmptyField(boardItems, coordsCheck) && this.isAttack(coordsCheck, boardItems)) {
+                break;
+            }
+
+            if (limit && limit === moves.length) {
+                return moves;
+            }
+        }
+
+        return moves;
+    }
+
+    protected getRightMoves(boardItems: BoardItem[][], limit = 0) {
+        const moves: BoardCoords[] = [];
+
+        if (this.boardCoords.col === 0) {
+            return moves;
+        }
+
+        for (let col = this.boardCoords.col - 1; col > -1; col--) {
+            const coordsCheck = {
+                ...this.boardCoords,
+                col,
+            };
+
+            if (!Figure.isEmptyField(boardItems, coordsCheck) && !this.isAttack(coordsCheck, boardItems)) {
+                break;
+            }
+
+            moves.push(coordsCheck);
+
+            if (!Figure.isEmptyField(boardItems, coordsCheck) && this.isAttack(coordsCheck, boardItems)) {
+                break;
+            }
+
+            if (limit && limit === moves.length) {
+                return moves;
+            }
+        }
+
+        return moves;
+    }
+
+    protected getLeftMoves(boardItems: BoardItem[][], limit = 0): BoardCoords[] {
+        const moves: BoardCoords[] = [];
+
+        if (this.boardCoords.col === 7) {
+            return moves;
+        }
+
+        for (let col = this.boardCoords.col + 1; col < 8; col++) {
+            const coordsCheck = {
+                ...this.boardCoords,
+                col,
+            };
+
+            if (!Figure.isEmptyField(boardItems, coordsCheck) && !this.isAttack(coordsCheck, boardItems)) {
+                break;
+            }
+
+            moves.push(coordsCheck);
+
+            if (!Figure.isEmptyField(boardItems, coordsCheck) && this.isAttack(coordsCheck, boardItems)) {
+                break;
+            }
+
+            if (limit && limit === moves.length) {
+                return moves;
+            }
+        }
+
+        return moves;
+    }
+
+    protected getUpLeftDiagonalMove(boardItems: BoardItem[][], limit = 0): BoardCoords[] {
+        if (this.boardCoords.row === 0 && this.boardCoords.col === 0) {
+            return [];
+        }
+
+        const moves: BoardCoords[] = [];
+        let col = this.boardCoords.col - 1;
+        let row = this.boardCoords.row - 1;
+
+        for (; row > -1 && col > -1; row--, col--) {
+            if (!Figure.isEmptyField(boardItems, { row, col })) {
+                break;
+            }
+
+            moves.push({ row, col });
+
+            if (limit && limit === moves.length) {
+                return moves;
+            }
+        }
+
+        if (this.isAttack({ row, col }, boardItems)) {
+            moves.push({ row, col });
+        }
+
+        return moves;
+    }
+
+    protected getUpRightDiagonalMove(boardItems: BoardItem[][], limit = 0): BoardCoords[] {
+        if (this.boardCoords.row === 0 && this.boardCoords.col === 7) {
+            return [];
+        }
+
+        const moves: BoardCoords[] = [];
+        let col = this.boardCoords.col + 1;
+        let row = this.boardCoords.row - 1;
+        for (; row > -1 && col < 8; row--, col++) {
+            if (!Figure.isEmptyField(boardItems, { row, col })) {
+                break;
+            }
+
+            moves.push({ row, col });
+
+            if (limit && limit === moves.length) {
+                return moves;
+            }
+        }
+
+        if (this.isAttack({ row, col }, boardItems)) {
+            moves.push({ row, col });
+        }
+
+        return moves;
+    }
+
+    protected getDownLeftDiagonalMove(boardItems: BoardItem[][], limit = 0): BoardCoords[] {
+        if (this.boardCoords.row === 7 && this.boardCoords.col === 0) {
+            return [];
+        }
+
+        const moves: BoardCoords[] = [];
+        let col = this.boardCoords.col - 1;
+        let row = this.boardCoords.row + 1;
+
+        for (; row < 8 && col > -1; row++, col--) {
+            if (!Figure.isEmptyField(boardItems, { row, col })) {
+                break;
+            }
+
+            moves.push({ row, col });
+
+            if (limit && limit === moves.length) {
+                return moves;
+            }
+        }
+
+        if (this.isAttack({ row, col }, boardItems)) {
+            moves.push({ row, col });
+        }
+
+        return moves;
+    }
+
+    protected getDownRightDiagonalMove(boardItems: BoardItem[][], limit = 0): BoardCoords[] {
+        if (this.boardCoords.row === 7 && this.boardCoords.col === 0) {
+            return [];
+        }
+
+        const moves: BoardCoords[] = [];
+        let col = this.boardCoords.col + 1;
+        let row = this.boardCoords.row + 1;
+        for (; row < 8 && col < 8; row++, col++) {
+            if (!Figure.isEmptyField(boardItems, { row, col })) {
+                break;
+            }
+
+            moves.push({ row, col });
+
+            if (limit && limit === moves.length) {
+                return moves;
+            }
+        }
+
+        if (this.isAttack({ row, col }, boardItems)) {
+            moves.push({ row, col });
+        }
+
+        return moves;
+    }
 }

@@ -14,6 +14,12 @@ import { PawnResource } from "../resources/PawnResource";
 import { FieldColor } from "../enums/FieldColor";
 import { Bishop } from "../models/Bishop";
 import { BishopResource } from "../resources/BishopResource";
+import { Rook } from "../models/Rook";
+import { RookResource } from "../resources/RookResource";
+import { Coords } from "../interfaces/Coords";
+import { Figure } from "../models/Figure";
+import { Queen } from "../models/Queen";
+import { QueenResource } from "../resources/QueenResource";
 
 export class BoardManager {
     protected boardConfig: ChessBoardConfig | null = null;
@@ -42,21 +48,14 @@ export class BoardManager {
         }
 
         const { boardX, boardY, cellSize } = this.boardConfig;
+        const fieldCoords = {
+            x: boardX + cellSize * boardCoords.col,
+            y: boardY + cellSize * boardCoords.row,
+        };
+        const field = this.makeField(fieldColor, fieldCoords, boardCoords);
+        const figure = this.makeFigure(figureType, figureColor, boardCoords);
 
-        return new BoardItem(
-            container,
-            new Field(
-                this.boardTextures[fieldColor],
-                cellSize,
-                {
-                    x: boardX + cellSize * boardCoords.col,
-                    y: boardY + cellSize * boardCoords.row,
-                },
-                boardCoords,
-            ),
-            this.getFigure(figureType, figureColor, boardCoords),
-            boardCoords,
-        );
+        return new BoardItem(container, field, figure, boardCoords);
     }
 
     private loadConfig(): void {
@@ -77,9 +76,9 @@ export class BoardManager {
         };
     }
 
-    drawPlaceholder(): Graphics | null {
+    drawPlaceholder(): Graphics {
         if (!this.boardConfig) {
-            return null;
+            throw new Error("Config is not defined");
         }
 
         const { boardX, boardY, fullBoardSize } = this.boardConfig;
@@ -94,52 +93,42 @@ export class BoardManager {
         return board;
     }
 
-    private getFigure(figureType: FigureTypes | null, color: FigureColor | null, boardCoords: BoardCoords) {
+    private makeFigure(
+        figureType: FigureTypes | null,
+        color: FigureColor | null,
+        boardCoords: BoardCoords,
+    ): Figure | null {
         if (!figureType || !color || !this.boardConfig) {
             return null;
         }
 
         const { boardX, boardY, figSize, cellSize, figPaddings } = this.boardConfig;
+        const coords = {
+            x: boardX + cellSize * boardCoords.col + figSize / 2 + figPaddings,
+            y: boardY + cellSize * boardCoords.row + figSize / 2 + figPaddings,
+        };
+        const figuresMapper: { [key in FigureTypes]: () => Figure } = {
+            [FigureTypes.knight]: (): Figure => new Knight(color, KnightResource[color], figSize, coords, boardCoords),
+            [FigureTypes.pawn]: (): Figure => new Pawn(color, PawnResource[color], figSize, coords, boardCoords),
+            [FigureTypes.bishop]: (): Figure => new Bishop(color, BishopResource[color], figSize, coords, boardCoords),
+            [FigureTypes.rook]: (): Figure => new Rook(color, RookResource[color], figSize, coords, boardCoords),
+            [FigureTypes.queen]: (): Figure => new Queen(color, QueenResource[color], figSize, coords, boardCoords),
+        } as const;
 
-        if (figureType === FigureTypes.knight) {
-            return new Knight(
-                FigureColor[color],
-                KnightResource[color],
-                figSize,
-                {
-                    x: boardX + cellSize * boardCoords.col + figSize / 2 + figPaddings,
-                    y: boardY + cellSize * boardCoords.row + figSize / 2 + figPaddings,
-                },
-                boardCoords,
-            );
-        }
-
-        if (figureType === FigureTypes.pawn) {
-            return new Pawn(
-                FigureColor[color],
-                PawnResource[color],
-                figSize,
-                {
-                    x: boardX + cellSize * boardCoords.col + figSize / 2 + figPaddings,
-                    y: boardY + cellSize * boardCoords.row + figSize / 2 + figPaddings,
-                },
-                boardCoords,
-            );
-        }
-
-        if (figureType === FigureTypes.bishop) {
-            return new Bishop(
-                FigureColor[color],
-                BishopResource[color],
-                figSize,
-                {
-                    x: boardX + cellSize * boardCoords.col + figSize / 2 + figPaddings,
-                    y: boardY + cellSize * boardCoords.row + figSize / 2 + figPaddings,
-                },
-                boardCoords,
-            );
-        }
+        try {
+            return figuresMapper[figureType]();
+        } catch (e) {}
 
         return null;
+    }
+
+    private makeField(color: FieldColor, coords: Coords, boardCoords: BoardCoords) {
+        if (!this.boardConfig) {
+            throw new Error("Config is not defined");
+        }
+
+        const { cellSize } = this.boardConfig;
+
+        return new Field(this.boardTextures[color], cellSize, coords, boardCoords);
     }
 }

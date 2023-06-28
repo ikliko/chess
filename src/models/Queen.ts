@@ -2,9 +2,14 @@ import { Figure } from "./Figure";
 import { BoardItem } from "./BoardItem";
 import { BoardCoords } from "../interfaces/BoardCoords";
 
-export class Bishop extends Figure {
+export class Queen extends Figure {
     getAvailablePositions(boardItems: BoardItem[][]): BoardCoords[] {
         return [
+            ...this.getUpMoves(boardItems),
+            ...this.getDownMoves(boardItems),
+            ...this.getRightMoves(boardItems),
+            ...this.getLeftMoves(boardItems),
+
             ...this.getUpLeftDiagonalMove(boardItems),
             ...this.getUpRightDiagonalMove(boardItems),
             ...this.getDownLeftDiagonalMove(boardItems),

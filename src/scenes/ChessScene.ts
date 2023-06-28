@@ -54,9 +54,9 @@ export class ChessScene extends Scene {
 
     private initListeners() {
         window.addEventListener("prepareMove", ({ detail: boardItem }: any) => {
-            if (boardItem.figure.color !== this.getCurrentPlayer()) {
-                return;
-            }
+            // if (boardItem.figure.color !== this.getCurrentPlayer()) {
+            //     return;
+            // }
 
             this.clearBoard();
 
@@ -98,7 +98,10 @@ export class ChessScene extends Scene {
 
         const boardItems = [
             [
-                this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.black, FigureTypes.rook, {
+                    row,
+                    col: col++,
+                }),
 
                 this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.black, FigureTypes.knight, {
                     row,
@@ -109,7 +112,10 @@ export class ChessScene extends Scene {
                     col: col++,
                 }),
 
-                this.boardManager.makeBoardItem(this.scene, FieldColor.black, null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.black, FigureTypes.queen, {
+                    row,
+                    col: col++,
+                }),
                 this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
                 this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.black, FigureTypes.bishop, {
                     row,
@@ -121,7 +127,10 @@ export class ChessScene extends Scene {
                     col: col++,
                 }),
 
-                this.boardManager.makeBoardItem(this.scene, FieldColor.black, null, null, { row, col: col++ }),
+                this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.black, FigureTypes.rook, {
+                    row,
+                    col: col++,
+                }),
             ],
         ];
 
@@ -234,7 +243,10 @@ export class ChessScene extends Scene {
         col = 0;
         row++;
         boardItems.push([
-            this.boardManager.makeBoardItem(this.scene, FieldColor.black, null, null, { row, col: col++ }),
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.white, FigureTypes.rook, {
+                row,
+                col: col++,
+            }),
 
             this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.white, FigureTypes.knight, {
                 row,
@@ -258,7 +270,10 @@ export class ChessScene extends Scene {
                 col: col++,
             }),
 
-            this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
+            this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.white, FigureTypes.rook, {
+                row,
+                col: col++,
+            }),
         ]);
 
         this.boardItems = boardItems;
