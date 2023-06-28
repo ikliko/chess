@@ -20,6 +20,8 @@ import { Coords } from "../interfaces/Coords";
 import { Figure } from "../models/Figure";
 import { Queen } from "../models/Queen";
 import { QueenResource } from "../resources/QueenResource";
+import { King } from "../models/King";
+import { KingResource } from "../resources/KingResource";
 
 export class BoardManager {
     protected boardConfig: ChessBoardConfig | null = null;
@@ -113,6 +115,7 @@ export class BoardManager {
             [FigureTypes.bishop]: (): Figure => new Bishop(color, BishopResource[color], figSize, coords, boardCoords),
             [FigureTypes.rook]: (): Figure => new Rook(color, RookResource[color], figSize, coords, boardCoords),
             [FigureTypes.queen]: (): Figure => new Queen(color, QueenResource[color], figSize, coords, boardCoords),
+            [FigureTypes.king]: (): Figure => new King(color, KingResource[color], figSize, coords, boardCoords),
         } as const;
 
         try {

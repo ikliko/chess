@@ -107,6 +107,7 @@ export class ChessScene extends Scene {
                     row,
                     col: col++,
                 }),
+
                 this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.black, FigureTypes.bishop, {
                     row,
                     col: col++,
@@ -116,7 +117,12 @@ export class ChessScene extends Scene {
                     row,
                     col: col++,
                 }),
-                this.boardManager.makeBoardItem(this.scene, FieldColor.white, null, null, { row, col: col++ }),
+
+                this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.black, FigureTypes.king, {
+                    row,
+                    col: col++,
+                }),
+
                 this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.black, FigureTypes.bishop, {
                     row,
                     col: col++,
@@ -262,7 +268,12 @@ export class ChessScene extends Scene {
                 row,
                 col: col++,
             }),
-            this.boardManager.makeBoardItem(this.scene, FieldColor.black, null, null, { row, col: col++ }),
+
+            this.boardManager.makeBoardItem(this.scene, FieldColor.black, FigureColor.white, FigureTypes.king, {
+                row,
+                col: col++,
+            }),
+
             this.boardManager.makeBoardItem(this.scene, FieldColor.white, FigureColor.white, FigureTypes.bishop, {
                 row,
                 col: col++,

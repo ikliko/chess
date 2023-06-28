@@ -4,4 +4,5 @@ export enum FigureTypes {
     bishop = "bishop",
     rook = "rook",
     queen = "queen",
+    king = "king",
 }
